@@ -1,0 +1,500 @@
+Enter {zone:The Twilight Strand|level:1}
+Thanks for using {highlight:Exile Overlay}{br}To interact you can use the following hotkeys{br}Settings {gem:F6}{br}Next Step {gem:F2}{br}Previous Step {gem:F3}{br}Move Overlay {gem:F4}{br}Hide Timer {gem:F7}
+Due to game limitations steps can only advance automatically{br}when you are changing to a different zone
+Find and kill {enemy:Hillock}
+Enter {zone:Lioneye's Watch|level:13}
+Hand in {quest:Enemy at the Gate}
+Enter {zone:The Coast|level:2}
+Get the {waypoint:Waypoint}
+Enter {zone:The Mud Flats|level:4}
+Find 3x {item:Glyph}{br}Little streams connect the 3 Rhoa nests{br}Usually form a triangle, but will rarely form a line
+Enter {zone:The Submerged Passage}
+{waypoint:Waypoint} to travel to {zone:The Coast|level:2}
+Enter {zone:The Tidal Island}
+Find and kill {enemy:Hailrake}, take {item:Medicine Chest}{br}Recommended Level: 4
+{logout:} to travel to {zone:Lioneye's Watch|level:13}
+Hand in {quest:Breaking Some Eggs}
+Hand in {quest:Mercy Mission}
+{waypoint:Waypoint} to travel to {zone:The Submerged Passage}
+Find bridge, place {portal:Portal}
+Enter {zone:The Ledge}
+Enter {zone:The Climb}
+Enter {zone:The Lower Prison|level:8}
+{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13}
+Take {portal:Portal} to travel to {zone:The Submerged Passage}
+Enter {zone:The Flooded Depths}{br}Go right of the bridge
+Find and kill {enemy:The Dweller of the Deep}{br}Search opposite the entrance{br}Look for the large empty room
+{logout:} to travel to {zone:Lioneye's Watch|level:13}
+Hand in {quest:The Dweller of the Deep}
+Hand in {quest:The Caged Brute}
+{waypoint:Waypoint} to travel to {zone:The Lower Prison|level:8}
+Complete {trial:Trial of Ascendancy}
+Enter {zone:The Upper Prison}
+Optionally find {npc:Chemist's Strongbox}{br}Look for map icon, access with nearby switch{br}High chance for {npc:Quicksilver Flask}
+Proceed to {zone:The Warden's Quarters}, kill {enemy:Brutus, Lord Incarcerator}{br}Recommended Level: 8
+Enter {zone:Prisoner's Gate|level:10}
+{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13}
+Hand in {quest:The Caged Brute}
+{waypoint:Waypoint} to travel to {zone:Prisoner's Gate|level:10}
+Enter {zone:The Ship Graveyard}{br}Go down the ledge next to the road
+Find {zone:The Ship Graveyard Cave}, place {portal:Portal}
+Enter {zone:The Cavern of Wrath}
+{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13}
+Take {portal:Portal} to travel to {zone:The Ship Graveyard}
+Enter {zone:The Ship Graveyard Cave}
+Find {item:Slave Girl}, take {item:Allflame}{br}Search opposite the entrance
+Enter {zone:The Ship Graveyard}, kill {enemy:Captain Fairgraves}
+{logout:} to travel to {zone:Lioneye's Watch|level:13}
+Hand in {quest:The Marooned Mariner}
+Hand in {quest:The Siren's Cadence}
+{waypoint:Waypoint} to travel to {zone:The Cavern of Wrath}
+Enter {zone:The Cavern of Anger|level:13}{br}Follow the water
+Proceed to  {zone:Merveil's Lair}, kill {enemy:Merveil, the Siren}{br}Follow the water{br}Recommended Level: 12
+Enter {zone:The Southern Forest|level:13}
+Enter {zone:The Forest Encampment}
+Enter {zone:The Old Fields}
+Find {zone:The Den|level:15}, place {portal:Portal}
+Enter {zone:The Crossroads|level:15}{br}Follow the road
+{waypoint:Waypoint} to travel to {zone:The Forest Encampment} {br}Follow the road
+Take {portal:Portal} to travel to {zone:The Old Fields}
+Enter {zone:The Den|level:15}
+Find and kill {enemy:The Great White Beast}
+{logout:} to travel to {zone:The Forest Encampment}
+Hand in {quest:The Great White Beast}
+{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}
+Enter {zone:The Chamber of Sins Level 1|level:15}
+Enter {zone:The Chamber of Sins Level 2|level:16}{br}Go in same direction as {waypoint:Waypoint}
+Complete {trial:Trial of Ascendancy}
+Kill {enemy:Fidelitas, the Mourning}, take {item:Baleful Gem}{br}Look for the long hallway{br}Recommended Level: 14-15
+{logout:} to travel to {zone:The Forest Encampment}
+Hand in {quest:Intruders in Black}
+{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}
+Enter {zone:The Fellshrine Ruins|level:16}
+Enter {zone:The Crypt Level 1}{br}Follow the road
+Complete {trial:Trial of Ascendancy}
+Enter {zone:The Crypt Level 2}
+Find {item:Altar}, take {item:Golden Hand}
+{logout:} to travel to {zone:The Forest Encampment}
+Hand in {quest:Through Sacred Ground}
+Enter {zone:The Riverways|level:15}
+Get the {waypoint:Waypoint}{br}Follow the road
+Enter {zone:The Western Forest|level:17}{br}Follow the road
+Get the {waypoint:Waypoint}{br}Follow the road
+Enter {zone:The Weaver's Chambers}{br}Search the side of road opposite {waypoint:Waypoint}
+Proceed to {zone:The Weaver's Nest}, kill {enemy:The Weaver}, take {item:Maligaro's Spike}{br}Recommended Level: 16
+{logout:} to travel to {zone:The Forest Encampment}
+Hand in {quest:Sharp and Cruel}
+{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}
+Enter {zone:The Broken Bridge|level:16}
+Kill {enemy:Kraityn, Scarbearer}, take {item:Kraityn's Amulet}{br}Follow the road
+{logout:} to travel to {zone:The Forest Encampment}
+{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
+Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
+{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
+Help {enemy:Alira Darktongue}, take {item:The Apex}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
+Kill {enemy:Captain Arteri}{br}Follow the road
+Take {item:Thaumetic Emblem}, activate {item:Thaumetic Seal}
+{logout:} to travel to {zone:The Forest Encampment}
+{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13} {npc:Act 1}
+Hand in {quest:The Way Forward}
+{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19} {npc:Act 2}
+Poison the {item:Tree Roots} to travel to {zone:The Vaal Ruins}
+Enter {zone:The Northern Forest|level:21}{br}S shape or L shape leads to exit
+Enter {zone:The Caverns}
+Get {crafting:Vaal Skill Damage - Rank 1}
+Enter {zone:The Ancient Pyramid}
+Proceed to {zone:Pyramid Apex}, kill {enemy:Vaal Oversoul}{br}First floor exit will be in one of the 3 corners{br}Remaining floors will have the exit diagonally across from the entrance{br}Recommended Level: 20-22
+Get {crafting:Spell Damage - Rank 1}
+Enter {zone:The City of Sarn}
+Get {crafting:Movement Speed - Rank 1}
+Help and talk to {npc:Clarissa}
+Enter {zone:The Sarn Encampment|level:33}
+Enter {zone:The Slums}
+Enter {zone:The Crematorium}{br}Follow Stairs
+Complete {trial:Trial of Ascendancy}
+Find and kill {enemy:Piety}, take {item:Tolman's Bracelet}
+Get {crafting:Defences - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+Talk to {npc:Clarissa}, take {item:Sewer Keys}
+Hand in {quest:Lost in Love}
+Enter {zone:The Slums}
+Enter {zone:The Sewers}
+Find 1x {item:Platinum Bust}
+Get the {waypoint:Waypoint}
+Find 2x {item:Platinum Bust}
+Enter {zone:The Marketplace}
+Get the {waypoint:Waypoint}
+Enter {zone:The Catacombs}{br}Look around nearby
+Complete {trial:Trial of Ascendancy}
+Get {crafting:Elemental Damage with Attacks - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+Hand in {quest:Victario's Secrets}
+{waypoint:Waypoint} to travel to {zone:The Marketplace}
+Enter {zone:The Battlefront}
+Get the {waypoint:Waypoint}
+Find and take {item:Ribbon Spool}
+Enter {zone:The Solaris Temple Level 1|level:27}
+Enter {zone:The Solaris Temple Level 2|level:28}
+Proceed to {zone:Eternal Laboratory}, get {crafting:Fire Damage - Rank 1}
+{waypoint:Waypoint} to travel to {zone:The Battlefront}
+Enter {zone:The Docks}
+Find and take {item:Thaumetic Sulphite}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+{waypoint:Waypoint} to travel to {zone:The Solaris Temple Level 2|level:28}
+Talk to {npc:Lady Dialla}
+Hand in {quest:The Ribbon Spool}
+Hand in {quest:Fiery Dust} , take {item:Infernal Talc}
+{waypoint:Waypoint} to travel to {zone:The Sewers}
+Burn the {item:Undying Blockage}
+Get {crafting:Physical Damage - Rank 1}
+Enter {zone:The Ebony Barracks}
+Get the {waypoint:Waypoint}
+Kill {enemy:General Gravicius}
+Enter {zone:The Lunaris Temple Level 1|level:29}
+Enter {zone:The Lunaris Temple Level 2|level:30}
+Find and kill {enemy:Piety}, take {item:Tower Key}{br}Follow stairs that are going up{br}At the fork in the road with wagons, go the route with 1 wagon, not 2
+Get {crafting:Lightning Damage - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+Hand in {quest:Piety's Pets}
+Hand in {quest:Sever the Right Hand}
+{waypoint:Waypoint} to travel to {zone:The Ebony Barracks}
+Enter {zone:The Imperial Gardens}
+Get the {waypoint:Waypoint}{br}Follow the road
+Complete {trial:Trial of Ascendancy}
+Get {crafting:All Attributes - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+{waypoint:Waypoint} to travel to {zone:The Imperial Gardens}
+Enter {zone:The Library}
+Get the {waypoint:Waypoint}
+Find {npc:Loose Candle} to travel to {zone:The Archives}
+Get {crafting:Life and Mana Regeneration - Rank 1}{br}Look for a candle in a narrow corridor
+Find 4x {item:Golden Page}
+{logout:} to travel to {zone:The Sarn Encampment|level:33}
+{waypoint:Waypoint} to travel to {zone:The Library}{br}Put currency needed to buy skill gems in inventory
+Hand in {quest:A Fixture of Fate}
+{waypoint:Waypoint} to travel to {zone:The Imperial Gardens}
+Enter {zone:The Sceptre of God}
+Enter {zone:The Upper Sceptre of God}{br}Stairs spawn in one of the corners
+Proceed to {zone:Tower Rooftop}, Kill {enemy:Dominus, High Templar}{br}Look for barricades
+Enter {zone:The Aqueduct}
+Enter {zone:Highgate|level:40}
+Enter {zone:The Dried Lake}
+Find and kill {enemy:Voll, Emperor of Purity}, take {item:Deshret's Banner}
+Get {crafting:Attack, Cast and Warcry Speed - Rank 1}
+{logout:} to travel to {zone:Highgate|level:40}
+Break {item:Deshret's Seal}
+Hand in {quest:Breaking the Seal}
+Enter {zone:The Mines Level 1}
+Get {crafting:Socket Colours}
+Enter {zone:The Mines Level 2}
+Free {item:Deshret}
+Enter {zone:The Crystal Veins}
+Get {crafting:Cold Damage - Rank 1}
+{waypoint:Waypoint} to travel to {zone:Highgate|level:40}
+Hand in {quest:An Indomitable Spirit}
+{waypoint:Waypoint} to travel to {zone:The Sarn Encampment|level:33} {npc:Act 3}
+Enter to {zone:Aspirants' Plaza}, Get the {waypoint:Waypoint}
+{trial:Ascend} Daily Layout
+Get {crafting:All Resistances - Rank 1}
+{waypoint:Waypoint} to travel to {zone:The Crystal Veins} {npc:Act 4}
+Enter {zone:Daresso's Dream}
+Enter {zone:The Grand Arena}
+Get {crafting:Socket Numbers - 2 to 4 Sockets}
+{waypoint:Waypoint} to travel to {zone:The Crystal Veins}
+Enter {zone:Kaom's Dream}
+Enter {zone:Kaom's Stronghold}{br}Follow Bridges
+Get {crafting:Socket Links - 2 to 4 Linked Sockets}
+Proceed to {zone:Caldera of the King}, kill {enemy:King Kaom}, take {item:The Eye of Fury}
+{portal:Portal} to travel to {zone:Highgate|level:40}
+{waypoint:Waypoint} to travel to {zone:The Grand Arena}
+Proceed to {zone:The Ring of Blades}, kill {enemy:Daresso, King of Swords}, take {item:The Eye of Desire}
+{logout:} to travel to {zone:Highgate|level:40}
+{waypoint:Waypoint} to travel to {zone:The Crystal Veins}
+Talk to {npc:Lady Dialla}
+Enter {zone:The Belly of the Beast Level 1}
+Enter {zone:The Belly of the Beast Level 2}
+Proceed to {zone:The Bowels of the Beast}, kill {enemy:Piety, the Abomination}
+Talk to {npc:Piety}
+Get {crafting:Elemental Resistances - Rank 2}
+Enter {zone:The Harvest}
+Find and kill {enemy:Doedre Darktongue}, take {item:Malachai's Lungs}
+Find and kill {enemy:Maligaro, The Inquisitor}, take {item:Malachai's Heart}
+Find and kill {enemy:Shavronne of Umbra}, take {item:Malachai's Entrails}
+Hand in {quest:Corpus Malachus}
+Proceed to {zone:The Black Core}, kill {enemy:Malachai, The Nightmare}
+{logout:} to travel to {zone:Highgate|level:40}
+Hand in {quest:The Eternal Nightmare}
+Enter {zone:The Ascent}
+Get {crafting:Ailment, Stun and Curse Mitigation - Rank 1}
+Activate {item:The Resonator}, use {item:Oriath Portal}
+Enter {zone:The Slave Pens}
+Find and kill {enemy:Overseer Krow}
+Enter {zone:Overseer's Tower}
+Hand in {quest:Return to Oriath}
+Enter {zone:The Control Blocks|level:41}
+Find and take {item:Miasmeter}
+Find and kill {enemy:Justicar Casticus}, take {item:Eyes of Zeal}
+Enter {zone:Oriath Square}
+Enter {zone:The Templar Courts}
+Enter {zone:The Chamber of Innocence}{br}Loop around clockwise{br}Farm Level: 40-42
+Get {crafting:Movement Speed and Exerted Attacks - Rank 2}
+Proceed to {zone:Sanctum of Innocence}, kill {enemy:High Templar Avarius}{br}Go counter-clockwise spiral
+{logout:} to travel to {zone:Overseer's Tower}
+Hand in {quest:The Key to Freedom}
+Hand in {quest:In Service to Science}
+Hand in {quest:Death to Purity}
+{waypoint:Waypoint} to travel to {zone:The Chamber of Innocence}
+Enter {zone:The Torched Courts|level:44}
+Enter {zone:The Ruined Square}{br}Loop around counter-clockwise
+Get the {waypoint:Waypoint}
+Enter {zone:The Ossuary|level:44}
+Find and take {item:Sign of Purity}
+Get {crafting:Physical Damage - Rank 2}
+{logout:} to travel to {zone:Overseer's Tower}
+{waypoint:Waypoint} to travel to {zone:The Ruined Square}
+Enter {zone:The Reliquary|level:44}{br}Go find the plaza
+Find 3x {item:Kitava's Torment}, search in the corners of the map
+Get {crafting:Accuracy - Rank 1}
+{logout:} to travel to {zone:Overseer's Tower}
+Hand in {quest:Kitava's Torments}
+{waypoint:Waypoint} to travel to {zone:The Ruined Square}
+Enter {zone:The Cathedral Rooftop|level:45}
+Proceed to {zone:Cathedral Apex}, kill {enemy:Kitava, the Insatiable}
+Talk to {npc:Lilly Roth}, to travel to to Wraeclast
+Enter {zone:Lioneye's Watch|level:50}
+Enter {zone:The Twilight Strand|level:45}
+Kill {enemy:Everything}
+{logout:} to travel to {zone:Lioneye's Watch|level:50}
+Hand in {quest:Fallen from Grace}
+Enter {zone:The Coast|level:45}
+Enter {zone:The Mud Flats|level:46}
+Find and kill {enemy:The Dishonoured Queen}, take {item:Eye of Conquest}{br}corner of area, normally by a house
+Enter {zone:The Karui Fortress}
+Proceed to {zone:Tukohama's Keep}, kill {enemy:Tukohama, Karui God of War}
+Get {crafting:Defences - Rank 2}
+Enter {zone:The Ridge}
+Enter {zone:The Lower Prison|level:47}
+Complete {trial:Trial of Ascendancy}
+Get {crafting:Double Resistances - Rank 1}
+Enter {zone:Shavronne's Tower}
+Proceed to {zone:Prison Rooftop}, kill {enemy:Shavronne the Returned} & {enemy:Reassembled Brutus}
+Proceed to {zone:The Warden's Chambers}
+Get {crafting:Spell Damage - Rank 2}
+Enter {zone:Prisoner's Gate|level:47}
+Enter {zone:The Western Forest|level:48}{br}Follow the road
+Get {crafting:Attributes - Rank 2}{br}Look for the torch touching the road{br}Follow the trail in the direction of the torch
+Enter {zone:The Riverways|level:48}{br}Follow the road
+Get the {waypoint:Waypoint}{br}Follow the road
+Enter {zone:The Wetlands|level:48}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+Proceed to {zone:The Spawning Ground}, kill {enemy:Ryslatha, the Puppet Mistress}
+{logout:} to travel to {zone:Lioneye's Watch|level:50}
+Hand in {quest:The Father of War}
+Hand in {quest:Essence of Umbra}
+Hand in {quest:The Puppet Mistress}
+{waypoint:Waypoint} to travel to {zone:The Riverways|level:48}
+Enter {zone:The Southern Forest|level:49}{br}Follow the road until it ends
+Enter {zone:The Cavern of Anger|level:49}
+Take {item:The Black Flag}
+Enter {zone:The Beacon}
+Get {crafting:Life and Mana - Rank 2}{br}Follow the shore
+Complete {item:Pillar Push}
+Light the {item:Beacon}, throw in {item:The Black Flag}
+Talk to {npc:Weylam Roth}, to travel to {zone:The Brine King's Reef}
+Proceed  to {zone:The Bring King's Throne}, kill {enemy:Tsoagoth, The Brine King}
+{logout:} to travel to {zone:Lioneye's Watch|level:50}
+Select {npc:Pantheons}
+{waypoint:Waypoint} to travel to {zone:The Bridge Encampment} {npc:Act 7}
+Enter {zone:The Broken Bridge|level:50}
+Find and take {item:Silver Locket}{br}Follow the road, look for the broken {waypoint:Waypoint}
+Enter {zone:The Crossroads|level:51}{br}Follow the road
+Get the {waypoint:Waypoint}
+Enter {zone:The Fellshrine Ruins|level:51}
+Enter {zone:The Crypt}{br}Follow the road
+Complete {trial:Trial of Ascendancy}
+Get {crafting:Damage over Time - Rank 1}
+Find {npc:Sarcophagus} to next floor
+Find and take {item:Maligaro's Map}
+{logout:} to travel to {zone:The Bridge Encampment}
+{waypoint:Waypoint} to travel to {zone:The Crossroads|level:51}
+Enter {zone:The Chamber of Sins Level 1|level:52}
+Get {crafting:Lightning Damage - Rank 2}
+Get the {waypoint:Waypoint}
+Activate {item:Map Device} with {item:Maligaro's Map}
+Enter {zone:Maligaro's Sanctum}
+Proceed to {zone:Maligaro's Workshop}, kill {enemy:Maligaro, the Artist}, take {item:Black Venom}{br}Follow edges of the zone and cross bridges in the corners{br}Typically bridges spawn in the opposite diagonal corners
+{logout:} to travel to {zone:The Bridge Encampment}
+Hand in {quest:Essence of the Artist}
+Hand in {quest:The Silver Locket}
+{waypoint:Waypoint} to travel to {zone:The Chamber of Sins Level 1|level:52}
+Hand in {quest:Web of Secrets} , take {item:Obsidian Key}
+Enter {zone:The Chamber of Sins Level 2|level:52}{br}Go in same direction as {waypoint:Waypoint}
+Complete {trial:Trial of Ascendancy}
+Get {crafting:Mana Regen - Rank 1}
+Open {npc:Secret Passage} to travel to {zone:The Den|level:53}
+Enter {zone:The Ashen Fields}
+Proceed to {zone:The Forest Encampment}, kill {enemy:Greust, Lord of the Forest}
+Enter {zone:The Northern Forest|level:53}
+{waypoint:Waypoint} to travel to {zone:The Bridge Encampment}
+Hand in {quest:The Master of a Million Faces}
+{waypoint:Waypoint} to travel to {zone:Prisoner's Gate|level:47} {npc:Act 6}
+Proceed to {zone:Valley of the Fire Drinker}, kill {enemy:Abberath, the Cloven One}{br}Go down the ledge next to the road
+{portal:Portal} to travel to {zone:Lioneye's Watch|level:50}
+Hand in {quest:The Cloven One}
+{waypoint:Waypoint} to travel to {zone:The Northern Forest|level:53} {npc:Act 7}
+Enter {zone:The Causeway}
+Get {crafting:Cold Damage - Rank 2}
+Find and take {item:Kishara's Star}
+Enter {zone:The Vaal City}
+Find {waypoint:Waypoint}
+{waypoint:Waypoint} to travel to {zone:The Northern Forest|level:53}
+Enter {zone:The Dread Thicket}
+Find and take 7x {item:Firefly}
+Get {crafting:Fire Damage - Rank 2}
+Proceed to {zone:Den of Despair}, kill {enemy:Gruthkul, Mother of Despair}
+{portal:Portal} to travel to {zone:The Bridge Encampment}
+Hand in {quest:Queen of Despair}
+Hand in {quest:Kishara's Star}
+{waypoint:Waypoint} to travel to {zone:Aspirants' Plaza}
+{trial:Ascend} Daily Layout
+Get {crafting:Double Resistances - Rank 2}
+{waypoint:Waypoint} to travel to {zone:The Vaal City}
+Hand in {quest:Lighting the Way}
+Enter {zone:The Temple of Decay Level 1}
+Enter {zone:The Temple of Decay Level 2}
+Get {crafting:Chaos Damage - Rank 1}
+Proceed to {zone:Arakaali's Web}, kill {enemy:Arakaali, Spinner of Shadows}
+Enter {zone:The Sarn Ramparts}
+Enter {zone:The Sarn Encampment|level:60}
+Enter {zone:The Toxic Conduits}
+Enter {zone:Doedre's Cesspool}
+Proceed to {zone:The Cauldron}, kill {enemy:Doedre the Vile}
+Proceed to {zone:Sewer Outlet}
+Get {crafting:Elemental Resistances - Rank 3}
+Enter {zone:The Quay}
+Find and take {item:Ankh of Eternity}{br}Follow wall
+Proceed to {zone:Resurrection Site}
+Talk to {npc:Clarissa}, kill {enemy:Tolman}
+Enter {zone:The Grain Gate}
+Find and kill {enemy:Gemling Legionnaires}{br}Follow the dead guards by doorways{br}Look for a book icon
+Enter {zone:The Imperial Fields}{br}Follow the dead guards by doorways
+Enter {zone:The Solaris Temple Level 1|level:59}{br}Follow the road until {waypoint:Waypoint}
+Get the {waypoint:Waypoint}
+Enter {zone:The Solaris Temple Level 2|level:59}
+Find and kill {enemy:Dawn, Harbinger of Solaris}, take {item:Sun Orb}
+Get {crafting:Traps and Mines - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:60}
+Hand in {quest:Essence of the Hag}
+Hand in {quest:The Gemling Legion}
+Hand in {quest:Love is Dead}
+{waypoint:Waypoint} to travel to {zone:The Solaris Temple Level 1|level:59}
+Enter {zone:The Solaris Concourse}
+Enter {zone:The Harbour Bridge}
+Enter {zone:The Lunaris Concourse}
+Get the {waypoint:Waypoint}
+Enter {zone:The Lunaris Temple Level 1|level:59}
+Enter {zone:The Lunaris Temple Level 2|level:59}
+Find and kill {enemy:Dusk, Harbinger of Lunaris}, take {item:Moon Orb}
+Get {crafting:Minions - Rank 1}
+{logout:} to travel to {zone:The Sarn Encampment|level:60}
+{waypoint:Waypoint} to travel to {zone:The Lunaris Concourse}
+Enter {zone:The Harbour Bridge}
+Proceed to {zone:The Sky Shrine}, activate {npc:Statue of the Sisters}
+Kill {enemy:Lunaris, Eternal Moon} & {enemy:Solaris, Eternal Sun}
+Enter {zone:The Blood Aqueduct}{br}Farm Level: 58-62
+Enter {zone:Highgate|level:67}
+{waypoint:Waypoint} to travel to {zone:The Lunaris Concourse} {npc:Act 8}
+Enter {zone:The Bath House}
+Complete {trial:Trial of Ascendancy}{br}Search side
+Get {crafting:Flask Duration - Rank 1}
+Enter {zone:The High Gardens}{br}Search side
+Proceed to {zone:The Pools of Terror}, kill {enemy:Yugul, Reflection of Terror}
+{portal:Portal} to travel to {zone:The Sarn Encampment|level:60}
+Hand in {quest:Reflection of Terror}
+{waypoint:Waypoint} to travel to {zone:Highgate|level:67} {npc:Act 9}
+Enter {zone:The Descent}
+Enter {zone:The Vastiri Desert}
+Get the {waypoint:Waypoint}
+Get {crafting:Attack and Cast Speed - Rank 2}
+Find and take {item:The Storm Blade}
+Enter {zone:The Foothills}
+Get the {waypoint:Waypoint}{br}Go until you find the cliff
+Enter {zone:The Boiling Lake}
+Find and Kill {enemy:The Basilisk}, take {item:Basilisk Acid}{br}Go look for petrified soldiers
+Get {crafting:Spell Damage - Rank 3}
+{logout:} to travel to {zone:Highgate|level:67}
+Talk to {npc:Sin}
+Hand in {quest:The Storm Blade}
+Hand in {quest:Queen of the Sands} , take {item:Bottled Storm}
+{waypoint:Waypoint} to travel to {zone:The Vastiri Desert}
+Enter {zone:The Oasis}
+Proceed to {zone:The Sand Pit}, kill {enemy:Shakari, Queen of the Sands}
+{logout:} to travel to {zone:Highgate|level:67}
+Hand in {quest:Queen of the Sands}
+{waypoint:Waypoint} to travel to {zone:The Foothills}
+Enter {zone:The Tunnel}
+Before {waypoint:Waypoint}, complete {trial:Trial of Ascendancy}
+Get {crafting:All Attributes - Rank 2}
+Enter {zone:The Quarry}
+Get the {waypoint:Waypoint}
+Get {crafting:Physical Damage - Rank 3}
+Proceed to {zone:Shrine of the Winds}, kill {enemy:Garukhan, Queen of the Winds}, take {item:Sekhema Feather}{br}or
+{logout:} to travel to {zone:Highgate|level:67}
+Hand in {quest:The Ruler of Highgate}
+{waypoint:Waypoint} to travel to {zone:The Quarry}
+Enter {zone:The Refinery}
+Get {crafting:Trigger a Socketed Spell when you Use a Skill or Focus}{br}Look for a sewer grate leading to {zone:Refinery Tunnels}, it is attached to the cart tracks
+Find and kill {enemy:General Adus}, take {item:Trarthan Powder}{br}Go follow cart tracks
+{logout:} to travel to {zone:Highgate|level:67}
+{waypoint:Waypoint} to travel to {zone:The Quarry}
+Talk to {npc:Sin}
+Enter {zone:The Belly of the Beast}
+Enter {zone:The Rotting Core}
+Proceed to {zone:The Black Core}
+Talk to {npc:Sin}
+Proceed to {zone:Doedre's Despair}, kill {enemy:Doedre, Darksoul}
+Proceed to {zone:Maligaro's Misery}, kill {enemy:Maligaro, The Broken}
+Proceed to {zone:Shavronne's Sorrow}, kill {enemy:Shavronne, Unbound}
+Proceed to {npc:Sin} to travel to {zone:The Black Heart}, kill {enemy:The Depraved Trinity}
+Optionally {portal:Portal} to {zone:Highgate|level:67}
+{waypoint:Waypoint} to travel to {zone:Oriath Docks} {npc:Act 10}
+Enter {zone:The Cathedral Rooftop|level:64}
+Proceed to {zone:Cathedral Apex}, kill {enemy:Plaguewing}
+Enter {zone:The Ravaged Square}
+Place {portal:Portal} in the plaza
+Enter {zone:The Control Blocks|level:66}
+{waypoint:Waypoint} to travel to {zone:Oriath Docks}
+Hand in {quest:Safe Passage}
+Take {portal:Portal} to travel to {zone:The Ravaged Square}
+Get the {waypoint:Waypoint}
+Enter {zone:The Ossuary|level:67}
+Get {crafting:Chaos Damage - Rank 2}
+Complete {trial:Trial of Ascendancy}
+{logout:} to travel to {zone:Oriath Docks}
+{waypoint:Waypoint} to travel to {zone:The Control Blocks|level:66}
+Find and kill {enemy:Vilenta}
+{logout:} to travel to {zone:Oriath Docks}
+Hand in {quest:Vilenta's Vengeance}
+{waypoint:Waypoint} to travel to {zone:Aspirants' Plaza}
+{trial:Ascend} Daily Layout
+Get {crafting:Double Resistances - Rank 3}
+{waypoint:Waypoint} to travel to {zone:The Ravaged Square}
+Enter {zone:The Torched Courts|level:65}
+Enter {zone:The Desecrated Chambers}{br}Loop around clockwise
+Get {crafting:Accuracy - Rank 2}
+Proceed to {zone:Sanctum of Innocence}, kill {enemy:Avarius, Reassembled}, take {item:The Staff of Purity}{br}Go counter-clockwise spiral
+{logout:} to travel to {zone:Oriath Docks}
+Talk to {npc:Bannon}
+Hand in {quest:Death and Rebirth}
+{waypoint:Waypoint} to travel to {zone:The Ravaged Square}
+Talk to {npc:Innocence}
+Enter {zone:The Canals}
+Enter {zone:The Feeding Trough}
+Get {crafting:Life and Mana - Rank 3}
+Talk to {npc:Sin}
+Proceed to {zone:Altar of Hunger}, kill {enemy:Kitava, the Insatiable}
+Talk to {npc:Sin} to travel to {zone:Oriath Docks}
+Talk to {npc:Lilly Roth}, Set Sail from Oriath
+Enter {zone:Karui Shores}
+Get {crafting:Movement Speed and Flask Enchantments - Rank 3}
+Hand in {quest:An End to Hunger} {br}Type {npc:/passives} in chat to confirm that you have all 23 passives from quests
