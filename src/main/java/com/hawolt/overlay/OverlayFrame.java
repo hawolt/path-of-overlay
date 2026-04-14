@@ -6,6 +6,7 @@ import com.hawolt.guide.ActTimer;
 import com.hawolt.guide.GuidePanel;
 import com.hawolt.logger.Logger;
 import com.hawolt.platform.Platform;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,14 +26,15 @@ public class OverlayFrame {
     private final JWindow overlayWindow;
     private final Platform platform;
     private final JFrame ownerFrame;
+
     private boolean hasBeenInGameOnce = false;
     private boolean campaignComplete = false;
     private boolean gameRunning = false;
     private boolean gameFocused = false;
     private boolean settingsOpen = false;
     private boolean forceVisible = false;
-    private boolean gameIngame = false;
     private boolean forceHidden = false;
+    private boolean gameIngame = false;
     private String lastZoneName = "";
     private int lastAreaLevel = 0;
 
@@ -56,10 +58,14 @@ public class OverlayFrame {
 
         overlayWindow.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentShown(ComponentEvent event) {
+            public void componentShown(ComponentEvent componentEvent) {
                 if (!(gameFocused || settingsOpen) || !shouldBeVisible()) {
-                    Logger.warn("[Overlay] componentShown fired but conditions not met - hiding. gameFocused={} settingsOpen={} shouldBeVisible={}",
-                            gameFocused, settingsOpen, shouldBeVisible());
+                    Logger.warn(
+                            "[Overlay] componentShown fired but conditions not met - hiding. gameFocused={} settingsOpen={} shouldBeVisible={}",
+                            gameFocused,
+                            settingsOpen,
+                            shouldBeVisible()
+                    );
                     overlayWindow.setVisible(false);
                 }
             }
@@ -91,6 +97,24 @@ public class OverlayFrame {
         zoneHistory.clear();
     }
 
+    public void setBandit(String bandit) {
+        guidePanel.setBandit(bandit);
+    }
+
+    public void setLoadouts(JSONObject loadouts, String selectedLoadout) {
+        Logger.info("[Overlay] setLoadouts: keys={} selected={}", loadouts.keySet(), selectedLoadout);
+        JSONObject skillSet = loadouts.optJSONObject(selectedLoadout);
+        if (skillSet == null && !loadouts.isEmpty()) {
+            String first = loadouts.keys().next();
+            skillSet = loadouts.getJSONObject(first);
+            Logger.info("[Overlay] setLoadouts: selected loadout not found, falling back to first: {}", first);
+        }
+        if (skillSet != null) {
+            GemRequirements requirements = GemRequirements.fromSkillSet(skillSet);
+            guidePanel.setGemRequirements(requirements);
+        }
+    }
+
     public void setActiveClass(String className) {
         Logger.info("[Overlay] Active class set to: {}", className);
         guidePanel.setActiveClass(className);
@@ -112,8 +136,14 @@ public class OverlayFrame {
         }
         boolean comingFromHideout = lastZoneName.toLowerCase().contains("hideout");
         boolean enteringHideout = zoneName.toLowerCase().contains("hideout");
-        Logger.info("[Overlay] seekToZone: zone={} level={} lastZone={} comingFromHideout={} enteringHideout={}",
-                zoneName, areaLevel, lastZoneName, comingFromHideout, enteringHideout);
+        Logger.info(
+                "[Overlay] seekToZone: zone={} level={} lastZone={} comingFromHideout={} enteringHideout={}",
+                zoneName,
+                areaLevel,
+                lastZoneName,
+                comingFromHideout,
+                enteringHideout
+        );
         lastZoneName = zoneName;
         lastAreaLevel = areaLevel;
         if (comingFromHideout || enteringHideout) {
@@ -122,8 +152,12 @@ public class OverlayFrame {
         }
         String previousZone = zoneHistory.peekLast();
         zoneHistory.addLast(zoneName);
-        Logger.info("[Overlay] seekToZone: forwarding to GuidePanel zone={} previousZone={} historySize={}",
-                zoneName, previousZone, zoneHistory.size());
+        Logger.info(
+                "[Overlay] seekToZone: forwarding to GuidePanel zone={} previousZone={} historySize={}",
+                zoneName,
+                previousZone,
+                zoneHistory.size()
+        );
         guidePanel.seekToZone(zoneName, areaLevel);
     }
 
@@ -137,7 +171,12 @@ public class OverlayFrame {
             return;
         }
         boolean enteringHideout = zoneName.toLowerCase().contains("hideout");
-        Logger.info("[Overlay] seekToZoneFromStart: zone={} level={} enteringHideout={}", zoneName, areaLevel, enteringHideout);
+        Logger.info(
+                "[Overlay] seekToZoneFromStart: zone={} level={} enteringHideout={}",
+                zoneName,
+                areaLevel,
+                enteringHideout
+        );
         lastZoneName = zoneName;
         lastAreaLevel = areaLevel;
         if (enteringHideout) {
@@ -145,7 +184,11 @@ public class OverlayFrame {
             return;
         }
         String previousZone = zoneHistory.peekLast();
-        Logger.info("[Overlay] seekToZoneFromStart: forwarding to GuidePanel zone={} previousZone={}", zoneName, previousZone);
+        Logger.info(
+                "[Overlay] seekToZoneFromStart: forwarding to GuidePanel zone={} previousZone={}",
+                zoneName,
+                previousZone
+        );
         guidePanel.seekToZoneFromStart(zoneName, areaLevel);
     }
 
@@ -167,7 +210,12 @@ public class OverlayFrame {
         guidePanel.reloadSteps();
         if (!lastZoneName.isEmpty()) {
             String previousZone = zoneHistory.peekLast();
-            Logger.info("[Overlay] reloadGuide: seeking to lastZoneName={} previousZone={}, lastAreaLevel={}", lastZoneName, previousZone, lastAreaLevel);
+            Logger.info(
+                    "[Overlay] reloadGuide: seeking to lastZoneName={} previousZone={}, lastAreaLevel={}",
+                    lastZoneName,
+                    previousZone,
+                    lastAreaLevel
+            );
             guidePanel.seekToZoneFromStart(lastZoneName, lastAreaLevel);
         }
     }
@@ -222,6 +270,10 @@ public class OverlayFrame {
         updateVisibility();
     }
 
+    public void toggleTimerPause() {
+        guidePanel.toggleTimerPause();
+    }
+
     private boolean shouldBeVisible() {
         if (!gameRunning) return false;
         if (forceHidden) return false;
@@ -233,9 +285,19 @@ public class OverlayFrame {
     private void updateVisibility() {
         boolean shouldBe = shouldBeVisible();
         boolean visible = (gameFocused || settingsOpen) && shouldBe;
-        Logger.info("[Overlay] updateVisibility: gameFocused={} settingsOpen={} shouldBeVisible={} -> visible={} (gameRunning={} forceVisible={} forceHidden={} campaignComplete={} gameIngame={} hasBeenInGameOnce={})",
-                gameFocused, settingsOpen, shouldBe, visible,
-                gameRunning, forceVisible, forceHidden, campaignComplete, gameIngame, hasBeenInGameOnce);
+        Logger.info(
+                "[Overlay] updateVisibility: gameFocused={} settingsOpen={} shouldBeVisible={} -> visible={} (gameRunning={} forceVisible={} forceHidden={} campaignComplete={} gameIngame={} hasBeenInGameOnce={})",
+                gameFocused,
+                settingsOpen,
+                shouldBe,
+                visible,
+                gameRunning,
+                forceVisible,
+                forceHidden,
+                campaignComplete,
+                gameIngame,
+                hasBeenInGameOnce
+        );
         overlayWindow.setAlwaysOnTop(visible);
         overlayWindow.setVisible(visible);
         if (!visible && guidePanel.isMoveMode()) {
@@ -258,10 +320,6 @@ public class OverlayFrame {
         return window;
     }
 
-    public void toggleTimerPause() {
-        guidePanel.toggleTimerPause();
-    }
-
     private void resizeToSize(Dimension size) {
         overlayWindow.setSize(size);
     }
@@ -273,11 +331,13 @@ public class OverlayFrame {
     private Point defaultPosition() {
         Optional<Rectangle> gameBounds = platform.getGameWindowBounds();
         Rectangle screenBounds = gameBounds.orElse(
-                new Rectangle(GraphicsEnvironment
-                        .getLocalGraphicsEnvironment()
-                        .getDefaultScreenDevice()
-                        .getDefaultConfiguration()
-                        .getBounds())
+                new Rectangle(
+                        GraphicsEnvironment
+                                .getLocalGraphicsEnvironment()
+                                .getDefaultScreenDevice()
+                                .getDefaultConfiguration()
+                                .getBounds()
+                )
         );
         int x = screenBounds.x + (int) Math.round(
                 Config.DEFAULT_X_AT_1440P * (screenBounds.width / (double) Config.REFERENCE_WIDTH)
@@ -292,15 +352,15 @@ public class OverlayFrame {
     private void attachDragListener() {
         MouseAdapter dragAdapter = new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent event) {
+            public void mousePressed(MouseEvent mouseEvent) {
                 if (!guidePanel.isMoveMode()) return;
-                lastDragPoint.setLocation(event.getLocationOnScreen());
+                lastDragPoint.setLocation(mouseEvent.getLocationOnScreen());
             }
 
             @Override
-            public void mouseDragged(MouseEvent event) {
+            public void mouseDragged(MouseEvent mouseEvent) {
                 if (!guidePanel.isMoveMode()) return;
-                Point current = event.getLocationOnScreen();
+                Point current = mouseEvent.getLocationOnScreen();
                 int deltaX = current.x - lastDragPoint.x;
                 int deltaY = current.y - lastDragPoint.y;
                 lastDragPoint.setLocation(current);
@@ -308,15 +368,15 @@ public class OverlayFrame {
                 Optional<Rectangle> gameBounds = platform.getGameWindowBounds();
                 if (gameBounds.isEmpty()) return;
 
-                Rectangle gb = gameBounds.get();
+                Rectangle bounds = gameBounds.get();
                 Point location = overlayWindow.getLocation();
                 int newX = location.x + deltaX;
                 int newY = location.y + deltaY;
-                int maxX = gb.x + gb.width - overlayWindow.getWidth();
-                int maxY = gb.y + gb.height - overlayWindow.getHeight();
+                int maxX = bounds.x + bounds.width - overlayWindow.getWidth();
+                int maxY = bounds.y + bounds.height - overlayWindow.getHeight();
                 overlayWindow.setLocation(
-                        Math.max(gb.x, Math.min(newX, maxX)),
-                        Math.max(gb.y, Math.min(newY, maxY))
+                        Math.max(bounds.x, Math.min(newX, maxX)),
+                        Math.max(bounds.y, Math.min(newY, maxY))
                 );
             }
         };

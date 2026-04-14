@@ -1,7 +1,6 @@
 package com.hawolt;
 
 import com.hawolt.data.BuildCodeParser;
-import com.hawolt.data.GemRequirements;
 import com.hawolt.guide.ActTimer;
 import com.hawolt.hotkey.HotkeyLabel;
 import com.hawolt.logger.Logger;
@@ -29,17 +28,18 @@ public class Main {
         Logger.info("[Main] Platform created: {}", platform.getClass().getSimpleName());
 
         Settings settings = new Settings();
-        Logger.info("[Main] Settings loaded - logPath={} hotkeyNext={} hotkeyPrev={} hotkeyMove={} hotkeyTimer={} hotkeyPause={} hotkeySettings={}",
+        Logger.info(
+                "[Main] Settings loaded - logPath={} hotkeyNext={} hotkeyPrev={} hotkeyMove={} hotkeyTimer={} hotkeyPause={} hotkeySettings={}",
                 settings.getLogPath(),
                 settings.getHotkeyNext(),
                 settings.getHotkeyPrev(),
                 settings.getHotkeyMove(),
                 settings.getHotkeyTimer(),
                 settings.getHotkeyPause(),
-                settings.getHotkeySettings());
+                settings.getHotkeySettings()
+        );
 
         ActTimer actTimer = new ActTimer();
-
         CountDownLatch shutdown = new CountDownLatch(1);
 
         OverlayFrame[] overlayRef = new OverlayFrame[1];
@@ -58,24 +58,23 @@ public class Main {
                 parsed = BuildCodeParser.fetchFromBuild(savedPob);
             }
             if (!parsed.isEmpty()) {
-                JSONObject flattened = new JSONObject();
-                for (String skillSetKey : parsed.keySet()) {
-                    JSONObject skillSet = parsed.getJSONObject(skillSetKey);
-                    for (String gemName : skillSet.keySet()) {
-                        int existing = flattened.optInt(gemName, 0);
-                        flattened.put(gemName, existing + skillSet.getInt(gemName));
+                String bandit = parsed.optString("bandit", "Kill all");
+                JSONObject loadouts = parsed.optJSONObject("loadouts");
+                String savedLoadout = settings.getLoadout();
+                settings.setBandit(bandit);
+                SwingUtilities.invokeLater(() -> {
+                    overlay.setBandit(bandit);
+                    if (loadouts != null && !loadouts.isEmpty()) {
+                        overlay.setLoadouts(loadouts, savedLoadout);
                     }
-                }
-                GemRequirements requirements = GemRequirements.fromSkillSet(flattened);
-                SwingUtilities.invokeLater(() -> overlay.setGemRequirements(requirements));
-                Logger.info("[Main] Saved PoB applied successfully");
+                });
+                Logger.info("[Main] Saved PoB applied successfully - bandit={} loadout={}", bandit, savedLoadout);
             } else {
                 Logger.warn("[Main] Saved PoB parse returned empty result");
             }
         }
 
         AtomicReference<SettingsOverlay> settingsRef = new AtomicReference<>();
-
         AtomicReference<Thread> logThreadRef = new AtomicReference<>();
 
         Runnable startLogWatcher = () -> {
@@ -91,21 +90,19 @@ public class Main {
             Thread logThread = new Thread(new LogWatcher(
                     settings,
                     (zone, level) -> overlay.seekToZone(zone, level),
-                    (zone, level) -> SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(() -> overlay.seekToZoneFromStart(zone, level))),
+                    (zone, level) -> SwingUtilities.invokeLater(() -> overlay.seekToZoneFromStart(zone, level)),
                     focused -> SwingUtilities.invokeLater(() -> overlay.onGameFocusChanged(focused)),
                     ingame -> SwingUtilities.invokeLater(() -> {
                         overlay.onIngameChanged(ingame);
-                        SettingsOverlay so = settingsRef.get();
-                        if (so != null) so.onIngameChanged(ingame);
+                        SettingsOverlay settingsOverlay = settingsRef.get();
+                        if (settingsOverlay != null) settingsOverlay.onIngameChanged(ingame);
                     }),
                     () -> SwingUtilities.invokeLater(overlay::onCampaignComplete),
                     () -> {
                         actTimer.reset();
                         SwingUtilities.invokeLater(overlay::onCampaignReset);
                     },
-                    detectedClass -> SwingUtilities.invokeLater(
-                            () -> overlay.setActiveClass(detectedClass)
-                    )
+                    detectedClass -> SwingUtilities.invokeLater(() -> overlay.setActiveClass(detectedClass))
             ), "log-watcher");
             logThread.setDaemon(true);
             logThread.start();
@@ -117,8 +114,8 @@ public class Main {
             Logger.info("[Main] Process watchdog state changed: running={}", running);
             SwingUtilities.invokeLater(() -> {
                 overlay.onGameRunningChanged(running);
-                SettingsOverlay so = settingsRef.get();
-                if (so != null) so.onGameRunningChanged(running);
+                SettingsOverlay settingsOverlay = settingsRef.get();
+                if (settingsOverlay != null) settingsOverlay.onGameRunningChanged(running);
             });
         });
         Thread watchdogThread = new Thread(watchdog, "process-watchdog");
@@ -140,19 +137,21 @@ public class Main {
                         if (!hotkeysEnabled.get()) {
                             try {
                                 Thread.sleep(50);
-                            } catch (InterruptedException e) {
+                            } catch (InterruptedException interruptedException) {
                                 Thread.currentThread().interrupt();
                             }
                             continue;
                         }
 
-                        Logger.info("[HotkeyPump] Registering hotkeys - next={} prev={} move={} timer={} pause={} settings={}",
+                        Logger.info(
+                                "[HotkeyPump] Registering hotkeys - next={} prev={} move={} timer={} pause={} settings={}",
                                 settings.getHotkeyNext(),
                                 settings.getHotkeyPrev(),
                                 settings.getHotkeyMove(),
                                 settings.getHotkeyTimer(),
                                 settings.getHotkeyPause(),
-                                settings.getHotkeySettings());
+                                settings.getHotkeySettings()
+                        );
 
                         registerOne(platform, 1, settings.getHotkeyNext(), "Next");
                         registerOne(platform, 2, settings.getHotkeyPrev(), "Prev");
@@ -161,10 +160,12 @@ public class Main {
                         registerOne(platform, 5, settings.getHotkeySettings(), "Settings");
                         registerOne(platform, 6, settings.getHotkeyPause(), "Pause");
                         boolean reloadOk = platform.registerHotKey(7, Config.VK_RELOAD_GUIDE, Config.MOD_NOREPEAT);
-                        Logger.info("[HotkeyPump] id=7 label=ReloadGuide vk=0x{} mod=0x{} ok={}",
+                        Logger.info(
+                                "[HotkeyPump] id=7 label=ReloadGuide vk=0x{} mod=0x{} ok={}",
                                 Integer.toHexString(Config.VK_RELOAD_GUIDE),
                                 Integer.toHexString(Config.MOD_NOREPEAT),
-                                reloadOk);
+                                reloadOk
+                        );
 
                         Logger.info("[HotkeyPump] Entering GetMessage loop");
                         platform.runHotKeyLoop(id -> {
@@ -188,8 +189,8 @@ public class Main {
                                 }
                                 case 5 -> {
                                     Logger.info("[HotkeyPump] Dispatching: openSettings");
-                                    SettingsOverlay so = settingsRef.get();
-                                    if (so != null) SwingUtilities.invokeLater(so::toggle);
+                                    SettingsOverlay settingsOverlay = settingsRef.get();
+                                    if (settingsOverlay != null) SwingUtilities.invokeLater(settingsOverlay::toggle);
                                     else
                                         Logger.warn("[HotkeyPump] settingsRef is null - settings overlay not ready yet");
                                 }
@@ -212,7 +213,10 @@ public class Main {
                         }
 
                         if (keepRunning.get()) {
-                            Logger.info("[HotkeyPump] Loop will restart (keepRunning=true, hotkeysEnabled={})", hotkeysEnabled.get());
+                            Logger.info(
+                                    "[HotkeyPump] Loop will restart (keepRunning=true, hotkeysEnabled={})",
+                                    hotkeysEnabled.get()
+                            );
                         }
                     }
                     Logger.info("[HotkeyPump] Thread exiting (keepRunning=false)");
@@ -240,17 +244,28 @@ public class Main {
         CountDownLatch settingsReady = new CountDownLatch(1);
         SwingUtilities.invokeLater(() -> {
             Logger.info("[Main] Creating SettingsOverlay");
-            SettingsOverlay so = new SettingsOverlay(
+            SettingsOverlay settingsOverlay = new SettingsOverlay(
                     platform,
                     settings,
                     () -> {
-                        Logger.info("[Main] Settings saved - restarting log watcher and hotkey loop");
+                        Logger.info("[Main] Settings saved - applying loadout and restarting log watcher");
+                        SettingsOverlay current = settingsRef.get();
+                        if (current != null) {
+                            String selectedBandit = settings.getBandit();
+                            SwingUtilities.invokeLater(() -> overlay.setBandit(selectedBandit));
+                            JSONObject loadouts = current.getLoadouts();
+                            String selectedLoadout = current.getSelectedLoadout();
+                            if (loadouts != null && !loadouts.isEmpty()) {
+                                settings.setLoadout(selectedLoadout);
+                                SwingUtilities.invokeLater(() -> overlay.setLoadouts(loadouts, selectedLoadout));
+                            }
+                        }
                         platform.stopHotKeyLoop();
                         startLogWatcher.run();
                     },
                     () -> {
-                        SettingsOverlay s = settingsRef.get();
-                        if (s != null) s.hide();
+                        SettingsOverlay current = settingsRef.get();
+                        if (current != null) current.hide();
                     },
                     () -> SwingUtilities.invokeLater(overlay::forceShow),
                     () -> SwingUtilities.invokeLater(overlay::forceHide),
@@ -279,22 +294,29 @@ public class Main {
                             Logger.warn("[Main] PoB parse returned empty result");
                             return;
                         }
-                        JSONObject flattened = new JSONObject();
-                        for (String skillSetKey : parsed.keySet()) {
-                            JSONObject skillSet = parsed.getJSONObject(skillSetKey);
-                            for (String gemName : skillSet.keySet()) {
-                                int existing = flattened.optInt(gemName, 0);
-                                flattened.put(gemName, existing + skillSet.getInt(gemName));
+                        String bandit = parsed.optString("bandit", "Kill all");
+                        JSONObject loadouts = parsed.optJSONObject("loadouts");
+                        String savedLoadout = settings.getLoadout();
+                        SwingUtilities.invokeLater(() -> {
+                            overlay.setBandit(bandit);
+                            SettingsOverlay current = settingsRef.get();
+                            if (current != null) {
+                                current.setBandit(bandit);
+                                if (loadouts != null && !loadouts.isEmpty()) {
+                                    current.setLoadouts(loadouts, savedLoadout);
+                                }
                             }
-                        }
-                        GemRequirements requirements = GemRequirements.fromSkillSet(flattened);
-                        Logger.info("[Main] PoB parsed successfully, applying gem requirements");
-                        SwingUtilities.invokeLater(() -> overlay.setGemRequirements(requirements));
+                        });
+                        Logger.info(
+                                "[Main] PoB parsed - bandit={} loadouts={}",
+                                bandit,
+                                loadouts != null ? loadouts.keySet() : "none"
+                        );
                     }
             );
-            so.onGameRunningChanged(watchdog.isRunning());
+            settingsOverlay.onGameRunningChanged(watchdog.isRunning());
             Logger.info("[Main] SettingsOverlay created, initial gameRunning={}", watchdog.isRunning());
-            settingsRef.set(so);
+            settingsRef.set(settingsOverlay);
             settingsReady.countDown();
         });
         settingsReady.await();
@@ -302,8 +324,8 @@ public class Main {
 
         if (!settings.isLogPathValid()) {
             Logger.warn("[Main] No valid log path - opening settings for first-time configuration.");
-            SettingsOverlay so = settingsRef.get();
-            if (so != null) SwingUtilities.invokeLater(so::toggle);
+            SettingsOverlay settingsOverlay = settingsRef.get();
+            if (settingsOverlay != null) SwingUtilities.invokeLater(settingsOverlay::toggle);
         } else {
             Logger.info("[Main] Log path valid, starting log watcher");
             startLogWatcher.run();
@@ -313,8 +335,8 @@ public class Main {
             platform.installTray(
                     () -> {
                         Logger.info("[Main] Tray: open settings clicked");
-                        SettingsOverlay so = settingsRef.get();
-                        if (so != null) SwingUtilities.invokeLater(so::toggle);
+                        SettingsOverlay settingsOverlay = settingsRef.get();
+                        if (settingsOverlay != null) SwingUtilities.invokeLater(settingsOverlay::toggle);
                         else Logger.warn("[Main] Tray: settingsRef is null");
                     },
                     () -> {
@@ -338,10 +360,13 @@ public class Main {
             return;
         }
         boolean ok = platform.registerHotKey(id, win[0], win[1]);
-        Logger.info("[HotkeyPump] id={} label={} vk=0x{} mod=0x{} ok={}",
-                id, label,
+        Logger.info(
+                "[HotkeyPump] id={} label={} vk=0x{} mod=0x{} ok={}",
+                id,
+                label,
                 Integer.toHexString(win[0]),
                 Integer.toHexString(win[1]),
-                ok);
+                ok
+        );
     }
 }

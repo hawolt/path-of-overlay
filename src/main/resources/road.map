@@ -84,21 +84,52 @@ Enter {zone:The Weaver's Chambers}{br}Search the side of road opposite {waypoint
 Proceed to {zone:The Weaver's Nest}, kill {enemy:The Weaver}, take {item:Maligaro's Spike}{br}Recommended Level: 16
 {logout:} to travel to {zone:The Forest Encampment}
 Hand in {quest:Sharp and Cruel}
-{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}
-Enter {zone:The Broken Bridge|level:16}
-Kill {enemy:Kraityn, Scarbearer}, take {item:Kraityn's Amulet}{br}Follow the road
-{logout:} to travel to {zone:The Forest Encampment}
-{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
-Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
-Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
-{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
-Help {enemy:Alira Darktongue}, take {item:The Apex}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
-Kill {enemy:Captain Arteri}{br}Follow the road
-Take {item:Thaumetic Emblem}, activate {item:Thaumetic Seal}
-{logout:} to travel to {zone:The Forest Encampment}
-{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13} {npc:Act 1}
-Hand in {quest:The Way Forward}
-{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19} {npc:Act 2}
+{bandit:Help Alira}{bandit:Help Oak}{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}
+{bandit:Help Alira}{bandit:Help Oak}{bandit:Kill all}Enter {zone:The Broken Bridge|level:16}
+{bandit:Help Alira}{bandit:Help Oak}{bandit:Kill all}Kill {enemy:Kraityn, Scarbearer}, take {item:Kraityn's Amulet}{br}Follow the road
+{bandit:Help Alira}{bandit:Help Oak}{bandit:Kill all}{logout:} to travel to {zone:The Forest Encampment}
+{bandit:Help Alira}{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
+{bandit:Help Alira}Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+{bandit:Help Alira}Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
+{bandit:Help Alira}{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
+{bandit:Help Alira}Help {enemy:Alira Darktongue}, take {item:The Apex}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
+{bandit:Help Oak}{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
+{bandit:Help Oak}Find and kill {enemy:Alira Darktongue}, take {item:Alira's Amulet}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
+{bandit:Help Alira}{bandit:Help Oak}Kill {enemy:Captain Arteri}{br}Follow the road
+{bandit:Help Alira}{bandit:Help Oak}Take {item:Thaumetic Emblem}, activate {item:Thaumetic Seal}
+{bandit:Help Alira}{bandit:Help Oak}{logout:} to travel to {zone:The Forest Encampment}
+{bandit:Help Alira}{bandit:Help Oak}{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13} {npc:Act 1}
+{bandit:Help Alira}{bandit:Help Oak}Hand in {quest:The Way Forward}
+{bandit:Help Oak}{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
+{bandit:Help Oak}Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+{bandit:Help Oak}Help {enemy:Oak, Skullbreaker}, take {item:The Apex}
+{bandit:Help Alira}{bandit:Help Kraityn}{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19} {npc:Act 2}
+{bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
+{bandit:Help Kraityn}Find and kill {enemy:Alira Darktongue}, take {item:Alira's Amulet}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
+{bandit:Help Kraityn}Kill {enemy:Captain Arteri}{br}Follow the road
+{bandit:Help Kraityn}Take {item:Thaumetic Emblem}, activate {item:Thaumetic Seal}
+{bandit:Help Kraityn}{logout:} to travel to {zone:The Forest Encampment}
+{bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13} {npc:Act 1}
+{bandit:Help Kraityn}Hand in {quest:The Way Forward}
+{bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
+{bandit:Help Kraityn}Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+{bandit:Help Kraityn}Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
+{bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:The Crossroads|level:15}{br}Search opposite direction of the encampment entrance
+{bandit:Help Kraityn}Enter {zone:The Broken Bridge|level:16}
+{bandit:Help Kraityn}Help {enemy:Kraityn, Scarbearer}, take {item:The Apex}{br}Follow the road
+{bandit:Help Kraityn}{logout:} to travel to {zone:The Forest Encampment}
+{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
+{bandit:Kill all}Find and kill {enemy:Alira Darktongue}, take {item:Alira's Amulet}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
+{bandit:Kill all}Kill {enemy:Captain Arteri}{br}Follow the road
+{bandit:Kill all}Take {item:Thaumetic Emblem}, activate {item:Thaumetic Seal}
+{bandit:Kill all}{logout:} to travel to {zone:The Forest Encampment}
+{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13} {npc:Act 1}
+{bandit:Kill all}Hand in {quest:The Way Forward}
+{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
+{bandit:Kill all}Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
+{bandit:Kill all}Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
+{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Forest Encampment}
+{bandit:Kill all}Hand in {quest:Deal with the Bandits}, take {item:The Apex}
 Poison the {item:Tree Roots} to travel to {zone:The Vaal Ruins}
 Enter {zone:The Northern Forest|level:21}{br}S shape or L shape leads to exit
 Enter {zone:The Caverns}

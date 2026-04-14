@@ -139,6 +139,8 @@ public class BuildCodeParser {
 
             JSONObject result = new JSONObject();
 
+            JSONObject loadouts = new JSONObject();
+
             NodeList skillSets = document.getElementsByTagName("SkillSet");
             for (int i = 0; i < skillSets.getLength(); i++) {
                 Element skillSetElement = (Element) skillSets.item(i);
@@ -170,9 +172,30 @@ public class BuildCodeParser {
                     for (Map.Entry<String, Integer> entry : gems.entrySet()) {
                         skillSetObject.put(entry.getKey(), entry.getValue());
                     }
-                    result.put(title, skillSetObject);
+                    loadouts.put(title, skillSetObject);
                 }
             }
+
+            NodeList configSets = document.getElementsByTagName("ConfigSet");
+            String bandit = "Kill all";
+            for (int i = 0; i < configSets.getLength(); i++) {
+                Element configSet = (Element) configSets.item(i);
+                NodeList inputs = configSet.getElementsByTagName("Input");
+                for (int j = 0; j < inputs.getLength(); j++) {
+                    Element input = (Element) inputs.item(j);
+                    if ("bandit".equals(input.getAttribute("name"))) {
+                        String val = input.getAttribute("string");
+                        if (val != null && !val.isBlank()) {
+                            bandit = "Help " + val;
+                        }
+                        break;
+                    }
+                }
+            }
+
+            result.put("loadouts", loadouts);
+            result.put("bandit", bandit);
+
             Logger.info("[BuildCodeParser] Extracted {} skill sets from POB XML", result.length());
             return result;
 

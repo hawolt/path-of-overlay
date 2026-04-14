@@ -17,24 +17,26 @@ public class Settings {
 
     private static final Path SETTINGS_FILE = resolveSettingsPath();
 
-    private static final String KEY_LOG_PATH = "log.path";
-    private static final String KEY_POB_INPUT = "pob.input";
+    private static final String KEY_HOTKEY_SETTINGS = "hotkey.settings";
+    private static final String KEY_HOTKEY_PAUSE = "hotkey.pause";
+    private static final String KEY_HOTKEY_TIMER = "hotkey.timer";
+    private static final String KEY_HOTKEY_MOVE = "hotkey.move";
     private static final String KEY_HOTKEY_NEXT = "hotkey.next";
     private static final String KEY_HOTKEY_PREV = "hotkey.prev";
-    private static final String KEY_HOTKEY_MOVE = "hotkey.move";
-    private static final String KEY_HOTKEY_TIMER = "hotkey.timer";
-    private static final String KEY_HOTKEY_PAUSE = "hotkey.pause";
-    private static final String KEY_HOTKEY_SETTINGS = "hotkey.settings";
+    private static final String KEY_POB_INPUT = "pob.input";
+    private static final String KEY_LOG_PATH = "log.path";
+    private static final String KEY_LOADOUT = "loadout";
+    private static final String KEY_BANDIT = "bandit";
 
     private final Properties properties = new Properties();
 
     public Settings() {
         loadDefaults();
         if (Files.exists(SETTINGS_FILE)) {
-            try (InputStream s = Files.newInputStream(SETTINGS_FILE)) {
-                properties.load(s);
-            } catch (IOException e) {
-                Logger.error("[Settings] Could not load settings: {}", e.getMessage());
+            try (InputStream stream = Files.newInputStream(SETTINGS_FILE)) {
+                properties.load(stream);
+            } catch (IOException exception) {
+                Logger.error("[Settings] Could not load settings: {}", exception.getMessage());
             }
         }
     }
@@ -59,6 +61,22 @@ public class Settings {
 
     public void setPobInput(String input) {
         properties.setProperty(KEY_POB_INPUT, input);
+    }
+
+    public String getBandit() {
+        return properties.getProperty(KEY_BANDIT, "Kill all");
+    }
+
+    public void setBandit(String bandit) {
+        properties.setProperty(KEY_BANDIT, bandit);
+    }
+
+    public String getLoadout() {
+        return properties.getProperty(KEY_LOADOUT, "Default");
+    }
+
+    public void setLoadout(String loadout) {
+        properties.setProperty(KEY_LOADOUT, loadout);
     }
 
     public int getHotkeyNext() {
@@ -110,10 +128,10 @@ public class Settings {
     }
 
     public void save() {
-        try (OutputStream s = Files.newOutputStream(SETTINGS_FILE)) {
-            properties.store(s, "poe-overlay settings");
-        } catch (IOException e) {
-            Logger.error("[Settings] Could not save settings: {}", e.getMessage());
+        try (OutputStream stream = Files.newOutputStream(SETTINGS_FILE)) {
+            properties.store(stream, "poe-overlay settings");
+        } catch (IOException exception) {
+            Logger.error("[Settings] Could not save settings: {}", exception.getMessage());
         }
     }
 
@@ -146,7 +164,7 @@ public class Settings {
                 return fallback;
             }
             return encoded;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             return fallback;
         }
     }
@@ -160,7 +178,7 @@ public class Settings {
                             .getLocation()
                             .toURI()
             ).getParent().resolve("settings.properties");
-        } catch (Exception e) {
+        } catch (Exception exception) {
             return Paths.get("settings.properties");
         }
     }

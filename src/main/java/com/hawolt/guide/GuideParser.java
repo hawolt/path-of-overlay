@@ -13,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +25,10 @@ public class GuideParser {
             "\\{([a-z_]+):([^}]*)\\}|\\{(br)\\}"
     );
 
-    private static final String ACT_TOKEN = "act";
-    private static final String QUEST_TOKEN = "quest";
     private static final String LEVEL_SUFFIX = "|level:";
+    private static final String BANDIT_TOKEN = "bandit";
+    private static final String QUEST_TOKEN = "quest";
+    private static final String ACT_TOKEN = "act";
 
     private final MappingConfig mappingConfig;
 
@@ -67,7 +70,7 @@ public class GuideParser {
             if (ACT_TOKEN.equals(matcher.group(1))) {
                 try {
                     return Integer.parseInt(matcher.group(2).strip());
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException exception) {
                     Logger.warn("[GuideParser] Could not parse act number from: {}", matcher.group(2));
                 }
             }
@@ -80,6 +83,7 @@ public class GuideParser {
         Matcher matcher = TOKEN.matcher(line);
         int lastIndex = 0;
         String detectedQuestName = null;
+        Set<String> detectedBandits = new HashSet<>();
 
         while (matcher.find()) {
             if (matcher.start() > lastIndex) {
@@ -95,6 +99,9 @@ public class GuideParser {
                 if (QUEST_TOKEN.equals(tokenType) && detectedQuestName == null) {
                     detectedQuestName = tokenValue;
                 }
+                if (BANDIT_TOKEN.equals(tokenType)) {
+                    detectedBandits.add(tokenValue);
+                }
                 processToken(segments, tokenType, tokenValue);
             }
 
@@ -105,8 +112,8 @@ public class GuideParser {
             segments.add(Segment.text(line.substring(lastIndex), null));
         }
 
-        if (detectedQuestName != null) {
-            return new GuideStep(segments, detectedQuestName, actNumber);
+        if (detectedQuestName != null || !detectedBandits.isEmpty()) {
+            return new GuideStep(segments, detectedQuestName, actNumber, detectedBandits);
         }
         return new GuideStep(segments);
     }
@@ -119,10 +126,10 @@ public class GuideParser {
                 int suffixIndex = tokenValue.indexOf(LEVEL_SUFFIX);
                 if (suffixIndex != -1) {
                     zoneName = tokenValue.substring(0, suffixIndex);
-                    String levelStr = tokenValue.substring(suffixIndex + LEVEL_SUFFIX.length());
+                    String levelString = tokenValue.substring(suffixIndex + LEVEL_SUFFIX.length());
                     try {
-                        zoneLevel = Integer.parseInt(levelStr.strip());
-                    } catch (NumberFormatException e) {
+                        zoneLevel = Integer.parseInt(levelString.strip());
+                    } catch (NumberFormatException exception) {
                         Logger.warn("[GuideParser] Could not parse level suffix from zone token: {}", tokenValue);
                     }
                 }
@@ -134,15 +141,17 @@ public class GuideParser {
                 int suffixIndex = tokenValue.indexOf(LEVEL_SUFFIX);
                 if (suffixIndex != -1) {
                     zoneName = tokenValue.substring(0, suffixIndex);
-                    String levelStr = tokenValue.substring(suffixIndex + LEVEL_SUFFIX.length());
+                    String levelString = tokenValue.substring(suffixIndex + LEVEL_SUFFIX.length());
                     try {
-                        zoneLevel = Integer.parseInt(levelStr.strip());
-                    } catch (NumberFormatException e) {
+                        zoneLevel = Integer.parseInt(levelString.strip());
+                    } catch (NumberFormatException exception) {
                         Logger.warn("[GuideParser] Could not parse level suffix from town token: {}", tokenValue);
                     }
                 }
                 segments.add(Segment.zone(zoneName, mappingConfig.colorForType("zone"), zoneLevel));
                 segments.add(Segment.image(loadImage("town.png"), "town.png"));
+            }
+            case "bandit" -> {
             }
             case "npc" -> segments.add(Segment.text(tokenValue, mappingConfig.colorForType("npc")));
             case "quest" -> {
@@ -204,8 +213,8 @@ public class GuideParser {
     }
 
     private static List<String> readLines(String resourcePath) throws IOException {
-        Path workingDir = Paths.get(resourcePath);
-        if (Files.exists(workingDir)) return Files.readAllLines(workingDir);
+        Path workingDirectory = Paths.get(resourcePath);
+        if (Files.exists(workingDirectory)) return Files.readAllLines(workingDirectory);
 
         Path sourceResources = Paths.get("src", "main", "resources", resourcePath);
         if (Files.exists(sourceResources)) return Files.readAllLines(sourceResources);

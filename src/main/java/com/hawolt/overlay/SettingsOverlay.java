@@ -3,6 +3,7 @@ package com.hawolt.overlay;
 import com.hawolt.Settings;
 import com.hawolt.logger.Logger;
 import com.hawolt.platform.Platform;
+import org.json.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,28 +68,28 @@ public class SettingsOverlay {
 
         dialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowOpened(WindowEvent e) {
+            public void windowOpened(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowOpened - calling makeInteractable");
                 platform.makeInteractable(dialog);
             }
 
             @Override
-            public void windowClosed(WindowEvent e) {
+            public void windowClosed(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowClosed");
             }
 
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowClosing");
             }
 
             @Override
-            public void windowDeactivated(WindowEvent e) {
+            public void windowDeactivated(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowDeactivated");
             }
 
             @Override
-            public void windowActivated(WindowEvent e) {
+            public void windowActivated(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowActivated");
             }
         });
@@ -96,6 +97,23 @@ public class SettingsOverlay {
         dialog.setVisible(true);
         dialog.setVisible(false);
         Logger.info("[SettingsOverlay] Init complete. robot={}", robot != null ? "ok" : "null (AWTException)");
+    }
+
+    public void setBandit(String bandit) {
+        panel.setBandit(bandit);
+    }
+
+    public JSONObject getLoadouts() {
+        return panel.getLoadouts();
+    }
+
+    public String getSelectedLoadout() {
+        return panel.getSelectedLoadout();
+    }
+
+    public void setLoadouts(JSONObject loadouts, String savedLoadout) {
+        panel.setLoadouts(loadouts, savedLoadout);
+        dialog.setSize(panel.getPreferredSize());
     }
 
     public void onGameRunningChanged(boolean running) {
@@ -113,9 +131,17 @@ public class SettingsOverlay {
     }
 
     public void toggle() {
-        Logger.info("[SettingsOverlay] toggle() called - scheduling on EDT (shown={} gameRunning={})", shown, gameRunning);
+        Logger.info(
+                "[SettingsOverlay] toggle() called - scheduling on EDT (shown={} gameRunning={})",
+                shown,
+                gameRunning
+        );
         SwingUtilities.invokeLater(() -> {
-            Logger.info("[SettingsOverlay] toggle() on EDT - shown={} gameRunning={}", shown, gameRunning);
+            Logger.info(
+                    "[SettingsOverlay] toggle() on EDT - shown={} gameRunning={}",
+                    shown,
+                    gameRunning
+            );
             if (!gameRunning) {
                 Logger.warn("[SettingsOverlay] toggle() blocked - gameRunning=false. Is the game process running?");
                 return;
@@ -149,7 +175,11 @@ public class SettingsOverlay {
             pressEscape();
         }
         centerOnGameScreen();
-        Logger.info("[SettingsOverlay] show() setting dialog visible at location={} size={}", dialog.getLocation(), dialog.getSize());
+        Logger.info(
+                "[SettingsOverlay] show() setting dialog visible at location={} size={}",
+                dialog.getLocation(),
+                dialog.getSize()
+        );
         dialog.setVisible(true);
         requestKeyFocus();
         shown = true;
@@ -178,15 +208,23 @@ public class SettingsOverlay {
         Optional<Rectangle> gameBounds = platform.getGameWindowBounds();
         Logger.info("[SettingsOverlay] centerOnGameScreen() - gameBoundsFound={}", gameBounds.isPresent());
         Rectangle screen = gameBounds.orElse(
-                new Rectangle(0, 0,
+                new Rectangle(
+                        0,
+                        0,
                         Toolkit.getDefaultToolkit().getScreenSize().width,
-                        Toolkit.getDefaultToolkit().getScreenSize().height)
+                        Toolkit.getDefaultToolkit().getScreenSize().height
+                )
         );
         Dimension panelSize = panel.getPreferredSize();
         int centerX = screen.x + (screen.width - panelSize.width) / 2;
         int centerY = screen.y + (screen.height - panelSize.height) / 2;
-        Logger.info("[SettingsOverlay] centerOnGameScreen() - screen={} panelSize={} -> location=({},{})",
-                screen, panelSize, centerX, centerY);
+        Logger.info(
+                "[SettingsOverlay] centerOnGameScreen() - screen={} panelSize={} -> location=({},{})",
+                screen,
+                panelSize,
+                centerX,
+                centerY
+        );
         dialog.setLocation(centerX, centerY);
         dialog.setSize(panelSize);
     }
@@ -196,8 +234,8 @@ public class SettingsOverlay {
             Robot r = new Robot();
             Logger.info("[SettingsOverlay] Robot created successfully");
             return r;
-        } catch (AWTException e) {
-            Logger.warn("[SettingsOverlay] Robot creation failed: {}", e.getMessage());
+        } catch (AWTException exception) {
+            Logger.warn("[SettingsOverlay] Robot creation failed: {}", exception.getMessage());
             return null;
         }
     }

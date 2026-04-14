@@ -27,13 +27,20 @@ public class GemAnnotator {
 
     public List<DisplayEntry> buildDisplayList(
             List<GuideStep> rawSteps,
-            GemRequirements gemRequirements
+            GemRequirements gemRequirements,
+            String activeBandit
     ) {
         List<DisplayEntry> displayList = new ArrayList<>();
         Set<String> announcedGems = new HashSet<>();
 
         for (int rawIndex = 0; rawIndex < rawSteps.size(); rawIndex++) {
             GuideStep rawStep = rawSteps.get(rawIndex);
+
+            if (rawStep.isBanditStep() && rawStep.getBanditRequirements()
+                    .stream()
+                    .noneMatch(requirement -> requirement.equalsIgnoreCase(activeBandit))) {
+                continue;
+            }
 
             if (!rawStep.isQuestStep() || gemRequirements.isEmpty()) {
                 displayList.add(new DisplayEntry(rawStep, rawIndex));
@@ -43,19 +50,31 @@ public class GemAnnotator {
             String questName = rawStep.getQuestName();
             int actNumber = rawStep.getActNumber();
 
-            GuideStep annotatedQuestStep = annotateWithRewardGem(rawStep, questName, gemRequirements, announcedGems);
+            GuideStep annotatedQuestStep = annotateWithRewardGem(
+                    rawStep,
+                    questName,
+                    gemRequirements,
+                    announcedGems
+            );
             displayList.add(new DisplayEntry(annotatedQuestStep, rawIndex));
 
-            GuideStep vendorStep = buildVendorStep(questName, actNumber, gemRequirements, announcedGems);
+            GuideStep vendorStep = buildVendorStep(
+                    questName,
+                    actNumber,
+                    gemRequirements,
+                    announcedGems,
+                    rawStep.getBanditRequirements()
+            );
             if (vendorStep != null) {
                 displayList.add(new DisplayEntry(vendorStep, rawIndex));
             }
         }
 
         Logger.info(
-                "[GemAnnotator] Built display list: {} raw -> {} display steps",
+                "[GemAnnotator] Built display list: {} raw -> {} display steps (bandit={})",
                 rawSteps.size(),
-                displayList.size()
+                displayList.size(),
+                activeBandit
         );
         return displayList;
     }
@@ -74,14 +93,15 @@ public class GemAnnotator {
         segments.add(Segment.lineBreak());
         segments.add(Segment.text("Pick ", null));
         segments.add(Segment.text(gemName, mappingConfig.colorForGem(gemName)));
-        return new GuideStep(segments, rawStep.getQuestName(), rawStep.getActNumber());
+        return new GuideStep(segments, rawStep.getQuestName(), rawStep.getActNumber(), rawStep.getBanditRequirements());
     }
 
     private GuideStep buildVendorStep(
             String questName,
             int actNumber,
             GemRequirements gemRequirements,
-            Set<String> announcedGems
+            Set<String> announcedGems,
+            Set<String> banditRequirements
     ) {
         List<String> vendorGems = rewardsConfig.findVendorGems(questName, gemRequirements, announcedGems);
         if (vendorGems.isEmpty()) return null;
@@ -101,6 +121,6 @@ public class GemAnnotator {
             segments.add(Segment.text(gemName, mappingConfig.colorForGem(gemName)));
         }
 
-        return new GuideStep(segments);
+        return new GuideStep(segments, null, 0, banditRequirements);
     }
 }

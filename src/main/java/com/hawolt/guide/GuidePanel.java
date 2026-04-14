@@ -20,10 +20,10 @@ import java.util.function.Consumer;
 
 public class GuidePanel extends JPanel {
 
-    private static final int PADDING = 14;
-    private static final int GAP = 8;
-    private static final int ARC = 14;
     private static final int TIMER_GAP = 16;
+    private static final int PADDING = 14;
+    private static final int ARC = 14;
+    private static final int GAP = 8;
 
     private static final Color MOVE_MODE_BACKGROUND = new Color(255, 200, 0, 30);
     private static final Color MOVE_MODE_BORDER = new Color(255, 200, 0, 180);
@@ -41,6 +41,7 @@ public class GuidePanel extends JPanel {
             Config.BG_ALPHA_STEP_1,
             Config.BG_ALPHA_STEP_2
     };
+
     private final SlideAnimator animator = new SlideAnimator(this);
     private final Font[] slotFonts = new Font[Config.VISIBLE_STEPS];
     private final MappingConfig mappingConfig;
@@ -48,11 +49,13 @@ public class GuidePanel extends JPanel {
     private final GemAnnotator gemAnnotator;
     private final Font timerClockFont;
     private final int timerRowHeight;
+
     private GemRequirements gemRequirements = GemRequirements.empty();
-    private List<GuideStep> rawSteps = new ArrayList<>();
     private List<DisplayEntry> displaySteps = new ArrayList<>();
+    private List<GuideStep> rawSteps = new ArrayList<>();
     private Consumer<Dimension> onSizeNeeded;
     private Runnable onResizeToContent;
+    private String activeBandit = "Kill all";
     private ActTimer actTimer;
     private int stepIndex = 0;
     private boolean timerVisibleBeforeMoveMode = false;
@@ -83,6 +86,11 @@ public class GuidePanel extends JPanel {
         this.onResizeToContent = resizeToContent;
     }
 
+    public void setBandit(String bandit) {
+        this.activeBandit = bandit;
+        rebuildDisplaySteps();
+    }
+
     public void setActiveClass(String className) {
         rewardsConfig.setActiveClass(className);
         Logger.info("[GuidePanel] Active class updated to: {}", className);
@@ -96,7 +104,7 @@ public class GuidePanel extends JPanel {
 
     private void rebuildDisplaySteps() {
         int anchorRawIndex = displaySteps.isEmpty() ? 0 : displaySteps.get(stepIndex).rawIndex();
-        displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements);
+        displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
 
         int newStepIndex = 0;
         for (int i = 0; i < displaySteps.size(); i++) {
@@ -170,10 +178,6 @@ public class GuidePanel extends JPanel {
         }
     }
 
-    private boolean isZoneStep(String plainText) {
-        return (plainText.contains("enter") || plainText.contains("to travel to"));
-    }
-
     public void seekToZoneFromStart(String zoneName, int areaLevel) {
         updateActTimer(zoneName, areaLevel);
         String lowerZone = zoneName.toLowerCase();
@@ -186,14 +190,51 @@ public class GuidePanel extends JPanel {
         }
     }
 
+    public void setMoveMode(boolean enabled) {
+        moveMode = enabled;
+        if (enabled) {
+            timerVisibleBeforeMoveMode = timerVisible;
+            timerVisible = false;
+        } else {
+            timerVisible = timerVisibleBeforeMoveMode;
+        }
+        repaint();
+    }
+
+    public void toggleTimerPause() {
+        if (actTimer != null) actTimer.togglePause();
+    }
+
+    public boolean isMoveMode() {
+        return moveMode;
+    }
+
+    public Dimension computeRequiredSize() {
+        return computeRequiredSizeForIndex(stepIndex);
+    }
+
+    public void reloadSteps() {
+        try {
+            GuideParser parser = new GuideParser(mappingConfig);
+            rawSteps = parser.load("road.map");
+            displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
+            stepIndex = Math.min(stepIndex, Math.max(0, displaySteps.size() - 1));
+            Logger.info("[GuidePanel] Reloaded {} steps.", displaySteps.size());
+            if (onResizeToContent != null) onResizeToContent.run();
+            repaint();
+        } catch (IOException exception) {
+            Logger.error("[GuidePanel] Failed to reload road.map: {}", exception.getMessage());
+        }
+    }
+
+    private boolean isZoneStep(String plainText) {
+        return plainText.contains("enter") || plainText.contains("to travel to");
+    }
+
     private void updateActTimer(String zoneName, int areaLevel) {
         if (actTimer != null) {
             actTimer.onZoneEntered(zoneName, areaLevel);
-            Logger.info(
-                    "[GuidePanel] seekToZone={} currentAct={}",
-                    zoneName,
-                    actTimer.getCurrentAct()
-            );
+            Logger.info("[GuidePanel] seekToZone={} currentAct={}", zoneName, actTimer.getCurrentAct());
             if (actTimer.getCurrentAct() == ActTimer.Act.ACT_1) {
                 Logger.debug("[GuidePanel] ACT_1 detected, setting timerVisible=true");
                 SwingUtilities.invokeLater(() -> {
@@ -213,34 +254,20 @@ public class GuidePanel extends JPanel {
     private void applySeek(int targetIndex) {
         if (targetIndex >= displaySteps.size()) return;
         SwingUtilities.invokeLater(() -> {
-            stepIndex = targetIndex;
-            if (onResizeToContent != null) onResizeToContent.run();
-            repaint();
+            Dimension currentSize = computeRequiredSizeForIndex(stepIndex);
+            Dimension targetSize = computeRequiredSizeForIndex(targetIndex);
+            boolean targetIsSmaller = targetSize.width < currentSize.width || targetSize.height < currentSize.height;
+            animator.play(
+                    SlideAnimator.Direction.FORWARD,
+                    () -> {
+                        if (!targetIsSmaller && onSizeNeeded != null) onSizeNeeded.accept(targetSize);
+                    },
+                    () -> {
+                        stepIndex = targetIndex;
+                        if (targetIsSmaller && onSizeNeeded != null) onSizeNeeded.accept(targetSize);
+                    }
+            );
         });
-    }
-
-    public void setMoveMode(boolean enabled) {
-        moveMode = enabled;
-        if (enabled) {
-            timerVisibleBeforeMoveMode = timerVisible;
-            timerVisible = false;
-        } else {
-            timerVisible = timerVisibleBeforeMoveMode;
-        }
-        repaint();
-    }
-
-    public void toggleTimerPause() {
-        if (actTimer != null) actTimer.togglePause();
-    }
-
-
-    public boolean isMoveMode() {
-        return moveMode;
-    }
-
-    public Dimension computeRequiredSize() {
-        return computeRequiredSizeForIndex(stepIndex);
     }
 
     private Dimension computeRequiredSizeForIndex(int targetStepIndex) {
@@ -262,34 +289,17 @@ public class GuidePanel extends JPanel {
 
         totalHeight = totalHeight - GAP + PADDING * 2;
         int timerBlockHeight = timerRowHeight + PADDING + TIMER_GAP;
-        return new Dimension(
-                totalWidth + PADDING * 2 + 2,
-                totalHeight + timerBlockHeight + 2
-        );
+        return new Dimension(totalWidth + PADDING * 2 + 2, totalHeight + timerBlockHeight + 2);
     }
 
     private void loadSteps() {
         try {
             GuideParser parser = new GuideParser(mappingConfig);
             rawSteps = parser.load("road.map");
-            displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements);
+            displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
             Logger.info("[GuidePanel] Loaded {} steps.", displaySteps.size());
-        } catch (IOException e) {
-            Logger.error("[GuidePanel] Failed to load road.map: {}", e.getMessage());
-        }
-    }
-
-    public void reloadSteps() {
-        try {
-            GuideParser parser = new GuideParser(mappingConfig);
-            rawSteps = parser.load("road.map");
-            displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements);
-            stepIndex = Math.min(stepIndex, Math.max(0, displaySteps.size() - 1));
-            Logger.info("[GuidePanel] Reloaded {} steps.", displaySteps.size());
-            if (onResizeToContent != null) onResizeToContent.run();
-            repaint();
-        } catch (IOException e) {
-            Logger.error("[GuidePanel] Failed to reload road.map: {}", e.getMessage());
+        } catch (IOException exception) {
+            Logger.error("[GuidePanel] Failed to load road.map: {}", exception.getMessage());
         }
     }
 
