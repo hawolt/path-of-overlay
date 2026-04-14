@@ -9,53 +9,61 @@ import java.util.Map;
 
 public class GemRequirements {
 
-    private static final GemRequirements EMPTY = new GemRequirements(new HashMap<>());
+    private static final GemRequirements EMPTY = new GemRequirements(new HashMap<>(), new HashMap<>());
 
+    private final Map<String, String> supportTargets;
     private final Map<String, Integer> requiredGems;
 
-    private GemRequirements(Map<String, Integer> requiredGems) {
+    private GemRequirements(Map<String, Integer> requiredGems, Map<String, String> supportTargets) {
         this.requiredGems = Collections.unmodifiableMap(requiredGems);
+        this.supportTargets = Collections.unmodifiableMap(supportTargets);
     }
 
     public static GemRequirements fromUrl(String url) {
         JSONObject response = BuildCodeParser.fetchFromUrl(url);
-        return fromJsonObject(response);
+        return fromLoadout(response);
     }
 
     public static GemRequirements fromBuildCode(String importCode) {
         JSONObject response = BuildCodeParser.fetchFromBuild(importCode);
-        return fromJsonObject(response);
+        return fromLoadout(response);
     }
 
     public static GemRequirements fromSkillSet(JSONObject skillSetObject) {
-        return fromJsonObject(skillSetObject);
+        return fromLoadout(skillSetObject);
     }
 
     public static GemRequirements empty() {
         return EMPTY;
     }
 
-    private static GemRequirements fromJsonObject(JSONObject jsonObject) {
-        if (jsonObject == null || jsonObject.isEmpty()) return EMPTY;
+    private static GemRequirements fromLoadout(JSONObject skillSetObject) {
+        if (skillSetObject == null || skillSetObject.isEmpty()) return EMPTY;
         Map<String, Integer> gems = new HashMap<>();
-        for (String key : jsonObject.keySet()) {
-            try {
-                Object value = jsonObject.get(key);
-                if (value instanceof Integer intValue) {
-                    gems.put(key, intValue);
-                } else if (value instanceof JSONObject) {
-                    Logger.warn(
-                            "[GemRequirements] Key '{}' is a skill set - use fromSkillSet() instead",
-                            key
-                    );
-                } else {
-                    gems.put(key, jsonObject.getInt(key));
+        Map<String, String> supportTargets = new HashMap<>();
+        for (String linkKey : skillSetObject.keySet()) {
+            Object linkValue = skillSetObject.opt(linkKey);
+            if (!(linkValue instanceof JSONObject linkObject)) continue;
+            String activeSkill = resolveActiveSkillInLink(linkObject);
+            for (String gemName : linkObject.keySet()) {
+                try {
+                    gems.merge(gemName, linkObject.getInt(gemName), Integer::sum);
+                    if (gemName.endsWith("Support") && activeSkill != null) {
+                        supportTargets.put(gemName, activeSkill);
+                    }
+                } catch (Exception e) {
+                    Logger.warn("[GemRequirements] Could not parse quantity for gem: {}", gemName);
                 }
-            } catch (Exception e) {
-                Logger.warn("[GemRequirements] Could not parse quantity for gem: {}", key);
             }
         }
-        return new GemRequirements(gems);
+        return new GemRequirements(gems, supportTargets);
+    }
+
+    private static String resolveActiveSkillInLink(JSONObject linkObject) {
+        for (String gemName : linkObject.keySet()) {
+            if (!gemName.endsWith("Support")) return gemName;
+        }
+        return null;
     }
 
     public boolean isEmpty() {
@@ -64,6 +72,10 @@ public class GemRequirements {
 
     public boolean requires(String gemName) {
         return requiredGems.containsKey(gemName);
+    }
+
+    public String getSupportTarget(String supportGemName) {
+        return supportTargets.get(supportGemName);
     }
 
     public Map<String, Integer> getRequiredGems() {

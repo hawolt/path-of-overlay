@@ -8,42 +8,21 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SettingsPanel extends JPanel {
+import static com.hawolt.overlay.SettingsPainter.*;
 
-    private static final Color COL_TOGGLE_OFF_BORDER = new Color(150, 60, 60, 255);
-    private static final Color COL_TOGGLE_OFF_TEXT = new Color(210, 100, 100, 255);
-    private static final Color COL_TOGGLE_ON_BORDER = new Color(60, 150, 60, 255);
-    private static final Color COL_TOGGLE_ON_TEXT = new Color(100, 210, 100, 255);
-    private static final Color COL_RECAL_OK_BORDER = new Color(60, 160, 60, 255);
-    private static final Color COL_LOAD_OK_BORDER = new Color(60, 160, 60, 255);
-    private static final Color COL_ACTIVE_BORDER = new Color(180, 150, 60, 255);
-    private static final Color COL_RECAL_OK_TEXT = new Color(100, 220, 100, 255);
-    private static final Color COL_LOAD_OK_TEXT = new Color(100, 220, 100, 255);
-    private static final Color COL_BORDER_DISABLED = new Color(50, 45, 30, 120);
-    private static final Color COL_DISABLED = new Color(100, 95, 80, 180);
-    private static final Color COL_BORDER = new Color(80, 65, 30, 200);
-    private static final Color COL_LABEL = new Color(180, 168, 140, 210);
-    private static final Color COL_TITLE = new Color(220, 200, 140, 255);
-    private static final Color COL_VALUE = new Color(230, 215, 170, 255);
-    private static final Color COL_CLOSE = new Color(160, 60, 40, 230);
-    private static final Color COL_HINT = new Color(110, 100, 75, 180);
-    private static final Color COL_GOLD = new Color(200, 168, 75, 255);
-    private static final Color BG_FIELD_DISABLED = new Color(0, 0, 0, 60);
-    private static final Color BG_TOGGLE_OFF = new Color(55, 20, 20, 220);
-    private static final Color BG_TOGGLE_ON = new Color(20, 55, 20, 220);
-    private static final Color BG_RECAL_OK = new Color(20, 60, 20, 220);
-    private static final Color BG_LOAD_OK = new Color(20, 60, 20, 220);
-    private static final Color BG_LISTEN = new Color(120, 100, 40, 130);
-    private static final Color BG_OUTER = new Color(10, 8, 4, 255);
-    private static final Color BG_FIELD = new Color(0, 0, 0, 130);
-    private static final Color BG_SAVE = new Color(35, 28, 8, 220);
+public class SettingsPanel extends JPanel {
 
     private static final String[] BANDIT_OPTIONS = {"Kill all", "Help Oak", "Help Kraityn", "Help Alira"};
     private static final String[] ROW_LABELS = {
@@ -52,14 +31,11 @@ public class SettingsPanel extends JPanel {
 
     private static final int SAVE_FEEDBACK_DURATION_MS = 1500;
     private static final int GRID_COLS = 2;
-    private static final int ROW_H = 46;
-    private static final int PAD = 24;
-    private static final int GAP = 10;
-    private static final int ARC = 10;
-    private static final int W = 500;
 
+    private final SettingsHotkeyHandler hotkeyHandler;
     private final Rectangle[] fieldRects = new Rectangle[6];
     private final int[] fieldEncoded = new int[6];
+    private final Consumer<String> onGuideFileChanged;
     private final Consumer<String> onPobLoad;
     private final Runnable onForceShowOverlay;
     private final Runnable onForceHideOverlay;
@@ -68,15 +44,20 @@ public class SettingsPanel extends JPanel {
     private final Runnable onRecalibrate;
     private final JTextField pobTextField;
     private final Runnable onNeedFocus;
+    private final Runnable onPobClear;
     private final Settings settings;
     private final Runnable onClose;
     private final Runnable onSave;
 
     private List<String> loadoutKeys = new ArrayList<>();
     private JSONObject loadouts = new JSONObject();
+    private Rectangle guideEditRect = new Rectangle();
+    private Rectangle guideBrowseRect = new Rectangle();
+    private Rectangle guideClearRect = new Rectangle();
     private Rectangle logBrowseRect = new Rectangle();
     private Rectangle recalibrateRect = new Rectangle();
     private Rectangle forceShowRect = new Rectangle();
+    private Rectangle pobClearRect = new Rectangle();
     private Rectangle pobLoadRect = new Rectangle();
     private Rectangle loadoutRect = new Rectangle();
     private Rectangle banditRect = new Rectangle();
@@ -93,8 +74,8 @@ public class SettingsPanel extends JPanel {
     private boolean showLoadConfirmation = false;
     private boolean overlayForceVisible = true;
 
+    private String guidePath = "";
     private String logPath = "";
-    private int listeningIdx = -1;
     private int loadoutIndex = 0;
     private int banditIndex = 0;
 
@@ -108,7 +89,9 @@ public class SettingsPanel extends JPanel {
             Runnable onNeedFocus,
             Runnable onSuspendHotkeys,
             Runnable onResumeHotkeys,
-            Consumer<String> onPobLoad
+            Runnable onPobClear,
+            Consumer<String> onPobLoad,
+            Consumer<String> onGuideFileChanged
     ) {
         this.settings = settings;
         this.onSave = onSave;
@@ -119,7 +102,9 @@ public class SettingsPanel extends JPanel {
         this.onNeedFocus = onNeedFocus;
         this.onSuspendHotkeys = onSuspendHotkeys;
         this.onResumeHotkeys = onResumeHotkeys;
+        this.onPobClear = onPobClear;
         this.onPobLoad = onPobLoad;
+        this.onGuideFileChanged = onGuideFileChanged;
         setOpaque(false);
         setLayout(null);
         setFocusable(true);
@@ -127,7 +112,19 @@ public class SettingsPanel extends JPanel {
         loadValues();
         pobTextField = buildPobTextField();
         add(pobTextField);
-        initListeners();
+        hotkeyHandler = new SettingsHotkeyHandler(
+                fieldEncoded,
+                onSuspendHotkeys,
+                onResumeHotkeys,
+                () -> {
+                    onNeedFocus.run();
+                    requestFocusInWindow();
+                },
+                this::repaint,
+                index -> doSave()
+        );
+        hotkeyHandler.install(this);
+        initMouseListener();
         setPreferredSize(new Dimension(W + PAD * 2, totalHeight()));
     }
 
@@ -143,9 +140,9 @@ public class SettingsPanel extends JPanel {
         positionPobTextField();
     }
 
-    public void setLoadouts(JSONObject loadouts, String savedLoadout) {
-        this.loadouts = loadouts;
-        this.loadoutKeys = new ArrayList<>(loadouts.keySet());
+    public void setLoadouts(JSONObject newLoadouts, String savedLoadout) {
+        this.loadouts = newLoadouts;
+        this.loadoutKeys = new ArrayList<>(newLoadouts.keySet());
         this.loadoutIndex = 0;
         for (int i = 0; i < loadoutKeys.size(); i++) {
             if (loadoutKeys.get(i).equals(savedLoadout)) {
@@ -203,11 +200,33 @@ public class SettingsPanel extends JPanel {
                 repaint();
             }
         });
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent documentEvent) {
+                SwingUtilities.invokeLater(() -> repaint());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent documentEvent) {
+                SwingUtilities.invokeLater(() -> {
+                    if (field.getText().isBlank()) {
+                        doPobClear(true);
+                    } else {
+                        repaint();
+                    }
+                });
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent documentEvent) {
+            }
+        });
         return field;
     }
 
     private void loadValues() {
         logPath = settings.getLogPath() != null ? settings.getLogPath() : "";
+        guidePath = settings.getGuideFile() != null ? settings.getGuideFile() : "";
         fieldEncoded[0] = settings.getHotkeyNext();
         fieldEncoded[1] = settings.getHotkeyPrev();
         fieldEncoded[2] = settings.getHotkeyMove();
@@ -233,9 +252,10 @@ public class SettingsPanel extends JPanel {
     }
 
     private void positionPobTextField() {
-        int pobRowY = PAD + 28 + GAP + ROW_H + GAP;
+        int pobRowY = PAD + 28 + GAP + ROW_H + GAP + ROW_H + GAP;
+        int clearWidth = 60;
         int loadWidth = 80;
-        int pobFieldWidth = W - loadWidth - GAP;
+        int pobFieldWidth = W - loadWidth - GAP - clearWidth - GAP;
         FontMetrics labelMetrics = getFontMetrics(labelFont);
         if (labelMetrics == null) return;
         int labelWidth = labelMetrics.stringWidth("POB") + 20;
@@ -246,29 +266,49 @@ public class SettingsPanel extends JPanel {
         pobTextField.setBounds(textX, textY, textWidth, fieldHeight);
     }
 
-    private void initListeners() {
+    private void initMouseListener() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 Point point = mouseEvent.getPoint();
 
                 if (closeRect.contains(point)) {
-                    stopListening();
+                    hotkeyHandler.stopListening();
                     onClose.run();
                     return;
                 }
                 if (pobLoadRect.contains(point)) {
-                    stopListening();
+                    hotkeyHandler.stopListening();
                     doLoad();
                     return;
                 }
+                if (pobClearRect.contains(point)) {
+                    hotkeyHandler.stopListening();
+                    doPobClear();
+                    return;
+                }
+                if (guideClearRect.contains(point)) {
+                    hotkeyHandler.stopListening();
+                    doGuideClear();
+                    return;
+                }
+                if (guideEditRect.contains(point)) {
+                    hotkeyHandler.stopListening();
+                    doGuideEdit();
+                    return;
+                }
+                if (guideBrowseRect.contains(point)) {
+                    hotkeyHandler.stopListening();
+                    browseForGuideFile();
+                    return;
+                }
                 if (logBrowseRect.contains(point)) {
-                    stopListening();
+                    hotkeyHandler.stopListening();
                     browseForLogFile();
                     return;
                 }
                 if (forceShowRect.contains(point)) {
-                    stopListening();
+                    hotkeyHandler.stopListening();
                     overlayForceVisible = !overlayForceVisible;
                     if (overlayForceVisible) onForceShowOverlay.run();
                     else onForceHideOverlay.run();
@@ -276,7 +316,7 @@ public class SettingsPanel extends JPanel {
                     return;
                 }
                 if (recalibrateRect.contains(point)) {
-                    stopListening();
+                    hotkeyHandler.stopListening();
                     onRecalibrate.run();
                     showRecalibrateConfirmation = true;
                     repaint();
@@ -288,15 +328,13 @@ public class SettingsPanel extends JPanel {
                     resetTimer.start();
                     return;
                 }
-
-                if (mouseEvent.getButton() == MouseEvent.BUTTON1 && pobTextField.getBounds().contains(point)) {
-                    stopListening();
+                if (mouseEvent.getButton() == MouseEvent.BUTTON1
+                        && pobTextField.getBounds().contains(point)) {
+                    hotkeyHandler.stopListening();
                     pobTextField.requestFocusInWindow();
                     return;
                 }
-
-                if (listeningIdx >= 0) return;
-
+                if (hotkeyHandler.isListening()) return;
                 if (mouseEvent.getButton() == MouseEvent.BUTTON1) {
                     if (banditRect.contains(point)) {
                         banditIndex = (banditIndex + 1) % BANDIT_OPTIONS.length;
@@ -312,64 +350,12 @@ public class SettingsPanel extends JPanel {
                     }
                     for (int i = 0; i < fieldRects.length; i++) {
                         if (fieldRects[i] != null && fieldRects[i].contains(point)) {
-                            startListening(i);
+                            hotkeyHandler.startListening(i);
                             return;
                         }
                     }
                 }
-
-                stopListening();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent) {
-                if (listeningIdx < 0) return;
-                Point point = mouseEvent.getPoint();
-
-                if (mouseEvent.getButton() == MouseEvent.BUTTON1
-                        && fieldRects[listeningIdx] != null
-                        && fieldRects[listeningIdx].contains(point)) {
-                    return;
-                }
-
-                int virtualKey = HotkeyLabel.mouseButtonVk(mouseEvent.getButton());
-                if (virtualKey != 0) {
-                    int modifiers = mouseEvent.getModifiersEx() & (
-                            InputEvent.SHIFT_DOWN_MASK
-                                    | InputEvent.CTRL_DOWN_MASK
-                                    | InputEvent.ALT_DOWN_MASK
-                    );
-                    commitHotkey(HotkeyLabel.encode(virtualKey, modifiers));
-                }
-            }
-        });
-
-        addMouseWheelListener(mouseWheelEvent -> {
-            if (listeningIdx < 0) return;
-            int virtualKey = mouseWheelEvent.getWheelRotation() < 0
-                    ? HotkeyLabel.VK_SCROLL_UP
-                    : HotkeyLabel.VK_SCROLL_DOWN;
-            commitHotkey(HotkeyLabel.encode(virtualKey, 0));
-        });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-                if (listeningIdx < 0) return;
-                int virtualKey = keyEvent.getKeyCode();
-                if (virtualKey == KeyEvent.VK_ESCAPE) {
-                    stopListening();
-                    return;
-                }
-                if (virtualKey == KeyEvent.VK_SHIFT
-                        || virtualKey == KeyEvent.VK_CONTROL
-                        || virtualKey == KeyEvent.VK_ALT) return;
-                int modifiers = keyEvent.getModifiersEx() & (
-                        InputEvent.SHIFT_DOWN_MASK
-                                | InputEvent.CTRL_DOWN_MASK
-                                | InputEvent.ALT_DOWN_MASK
-                );
-                commitHotkey(HotkeyLabel.encode(virtualKey, modifiers));
+                hotkeyHandler.stopListening();
             }
         });
     }
@@ -399,31 +385,60 @@ public class SettingsPanel extends JPanel {
         }
     }
 
-    private void startListening(int index) {
-        listeningIdx = index;
-        onSuspendHotkeys.run();
-        repaint();
-        onNeedFocus.run();
-        requestFocusInWindow();
-    }
-
-    private void stopListening() {
-        if (listeningIdx < 0) return;
-        listeningIdx = -1;
-        onResumeHotkeys.run();
-        repaint();
-    }
-
-    private void commitHotkey(int encoded) {
-        if (listeningIdx < 0) return;
-        for (int i = 0; i < fieldEncoded.length; i++) {
-            if (i != listeningIdx && fieldEncoded[i] == encoded) {
-                fieldEncoded[i] = 0;
+    private void browseForGuideFile() {
+        Window parentWindow = SwingUtilities.getWindowAncestor(this);
+        try {
+            if (parentWindow != null) parentWindow.setAlwaysOnTop(false);
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Select road.map");
+            File current = guidePath.isBlank() ? new File(".") : new File(guidePath);
+            if (current.exists()) {
+                chooser.setCurrentDirectory(current.isDirectory() ? current : current.getParentFile());
+                chooser.setSelectedFile(current);
+            }
+            int result = chooser.showOpenDialog(null);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                guidePath = chooser.getSelectedFile().getAbsolutePath();
+                doSave();
+                onGuideFileChanged.accept(guidePath);
+                repaint();
+            }
+        } finally {
+            if (parentWindow != null) {
+                parentWindow.setAlwaysOnTop(true);
+                parentWindow.toFront();
             }
         }
-        fieldEncoded[listeningIdx] = encoded;
-        stopListening();
+    }
+
+    private void doGuideClear() {
+        if (guidePath.isBlank()) return;
+        guidePath = "";
         doSave();
+        onGuideFileChanged.accept("");
+        repaint();
+    }
+
+    private void doGuideEdit() {
+        if (guidePath.isBlank()) return;
+        try {
+            Runtime.getRuntime().exec(new String[]{"notepad.exe", guidePath});
+        } catch (Exception exception) {
+            Logger.error("[SettingsPanel] Failed to open guide in notepad: {}", exception.getMessage());
+        }
+    }
+
+    private void doPobClear() {
+        doPobClear(false);
+    }
+
+    private void doPobClear(boolean fieldAlreadyEmpty) {
+        if (!fieldAlreadyEmpty) pobTextField.setText("");
+        settings.setPobInput("");
+        settings.save();
+        onSave.run();
+        onPobClear.run();
+        repaint();
     }
 
     private void doSave() {
@@ -431,6 +446,7 @@ public class SettingsPanel extends JPanel {
         settings.setBandit(BANDIT_OPTIONS[banditIndex]);
         settings.setLoadout(getSelectedLoadout());
         settings.setPobInput(pobTextField.getText());
+        settings.setGuideFile(guidePath);
         settings.setHotkeyNext(fieldEncoded[0]);
         settings.setHotkeyPrev(fieldEncoded[1]);
         settings.setHotkeyMove(fieldEncoded[2]);
@@ -442,7 +458,11 @@ public class SettingsPanel extends JPanel {
     }
 
     private void doLoad() {
-        String pobText = pobTextField.getText();
+        String pobText = pobTextField.getText().trim();
+        if (pobText.isBlank()) {
+            doPobClear();
+            return;
+        }
         settings.setPobInput(pobText);
         settings.save();
         onSave.run();
@@ -460,6 +480,7 @@ public class SettingsPanel extends JPanel {
     private int totalHeight() {
         int gridRowCount = (int) Math.ceil((double) ROW_LABELS.length / GRID_COLS);
         return PAD + 28 + GAP
+                + ROW_H + GAP
                 + ROW_H + GAP
                 + ROW_H + GAP
                 + ROW_H + GAP
@@ -502,54 +523,82 @@ public class SettingsPanel extends JPanel {
 
         y += 28 + GAP;
 
-        int browseWidth = 80;
-        int fieldWidth = w - browseWidth - GAP;
-        paintField(g, x, y, fieldWidth, "Log File", logPath, false, false);
+        int buttonWidth = 80;
+        int fieldWidth = w - buttonWidth - GAP;
+        paintField(g, labelFont, valueFont, x, y, fieldWidth, "Log File", logPath, false, false);
         logRect = new Rectangle(x, y, fieldWidth, ROW_H);
-
-        g.setColor(BG_SAVE);
-        g.fillRoundRect(x + fieldWidth + GAP, y, browseWidth, ROW_H, ARC, ARC);
-        g.setColor(COL_BORDER);
-        g.drawRoundRect(x + fieldWidth + GAP, y, browseWidth, ROW_H, ARC, ARC);
-        g.setFont(valueFont);
-        g.setColor(COL_GOLD);
-        fontMetrics = g.getFontMetrics();
-        String browseText = "Browse...";
-        g.drawString(
-                browseText,
-                x + fieldWidth + GAP + (browseWidth - fontMetrics.stringWidth(browseText)) / 2,
-                y + (ROW_H + fontMetrics.getAscent() - fontMetrics.getDescent()) / 2
-        );
-        logBrowseRect = new Rectangle(x + fieldWidth + GAP, y, browseWidth, ROW_H);
+        paintButton(g, valueFont, x + fieldWidth + GAP, y, buttonWidth, "Browse", BG_SAVE, COL_BORDER, COL_GOLD);
+        logBrowseRect = new Rectangle(x + fieldWidth + GAP, y, buttonWidth, ROW_H);
 
         y += ROW_H + GAP;
 
-        int loadWidth = 80;
-        int pobFieldWidth = w - loadWidth - GAP;
-        boolean pobFocused = pobTextField.hasFocus();
-        paintFieldBackground(g, x, y, pobFieldWidth, "POB", pobFocused);
-
-        g.setColor(showLoadConfirmation ? BG_LOAD_OK : BG_SAVE);
-        g.fillRoundRect(x + pobFieldWidth + GAP, y, loadWidth, ROW_H, ARC, ARC);
-        g.setColor(showLoadConfirmation ? COL_LOAD_OK_BORDER : COL_BORDER);
-        g.drawRoundRect(x + pobFieldWidth + GAP, y, loadWidth, ROW_H, ARC, ARC);
-        g.setFont(valueFont);
-        g.setColor(showLoadConfirmation ? COL_LOAD_OK_TEXT : COL_GOLD);
-        fontMetrics = g.getFontMetrics();
-        String loadText = showLoadConfirmation ? "Loaded!" : "Load";
-        g.drawString(
-                loadText,
-                x + pobFieldWidth + GAP + (loadWidth - fontMetrics.stringWidth(loadText)) / 2,
-                y + (ROW_H + fontMetrics.getAscent() - fontMetrics.getDescent()) / 2
+        int guideClearWidth = 60;
+        int guideEditWidth = 60;
+        int guideBrowseWidth = 80;
+        int guideButtonsWidth = guideClearWidth + GAP + guideEditWidth + GAP + guideBrowseWidth;
+        int guideFieldWidth = w - guideButtonsWidth - GAP;
+        String guideDisplay = guidePath.isBlank() ? "default (road.map)" : guidePath;
+        paintField(g, labelFont, valueFont, x, y, guideFieldWidth, "Guide", guideDisplay, false, false);
+        int guideButtonX = x + guideFieldWidth + GAP;
+        boolean guideIsCustom = !guidePath.isBlank();
+        paintButton(
+                g, valueFont,
+                guideButtonX, y, guideClearWidth,
+                "Clear",
+                guideIsCustom ? BG_DANGER : BG_FIELD_DISABLED,
+                guideIsCustom ? COL_DANGER_BORDER : COL_BORDER_DISABLED,
+                guideIsCustom ? COL_DANGER_TEXT : COL_DISABLED
         );
-        pobLoadRect = new Rectangle(x + pobFieldWidth + GAP, y, loadWidth, ROW_H);
+        guideClearRect = guideIsCustom ? new Rectangle(guideButtonX, y, guideClearWidth, ROW_H) : new Rectangle();
+        guideButtonX += guideClearWidth + GAP;
+        paintButton(
+                g, valueFont,
+                guideButtonX, y, guideEditWidth,
+                "Edit",
+                guideIsCustom ? BG_SAVE : BG_FIELD_DISABLED,
+                guideIsCustom ? COL_BORDER : COL_BORDER_DISABLED,
+                guideIsCustom ? COL_GOLD : COL_DISABLED
+        );
+        guideEditRect = guideIsCustom ? new Rectangle(guideButtonX, y, guideEditWidth, ROW_H) : new Rectangle();
+        guideButtonX += guideEditWidth + GAP;
+        paintButton(g, valueFont, guideButtonX, y, guideBrowseWidth, "Browse", BG_SAVE, COL_BORDER, COL_GOLD);
+        guideBrowseRect = new Rectangle(guideButtonX, y, guideBrowseWidth, ROW_H);
+
+        y += ROW_H + GAP;
+
+        int clearWidth = 60;
+        int loadWidth = 80;
+        int pobFieldWidth = w - loadWidth - GAP - clearWidth - GAP;
+        boolean pobFocused = pobTextField.hasFocus();
+        paintFieldBackground(g, labelFont, x, y, pobFieldWidth, "POB", pobFocused);
+        int pobButtonX = x + pobFieldWidth + GAP;
+        boolean pobHasContent = !pobTextField.getText().isBlank();
+        paintButton(
+                g, valueFont,
+                pobButtonX, y, clearWidth,
+                "Clear",
+                pobHasContent ? BG_DANGER : BG_FIELD_DISABLED,
+                pobHasContent ? COL_DANGER_BORDER : COL_BORDER_DISABLED,
+                pobHasContent ? COL_DANGER_TEXT : COL_DISABLED
+        );
+        pobClearRect = pobHasContent ? new Rectangle(pobButtonX, y, clearWidth, ROW_H) : new Rectangle();
+        pobButtonX += clearWidth + GAP;
+        paintButton(
+                g, valueFont,
+                pobButtonX, y, loadWidth,
+                showLoadConfirmation ? "Loaded!" : "Load",
+                showLoadConfirmation ? BG_LOAD_OK : BG_SAVE,
+                showLoadConfirmation ? COL_LOAD_OK_BORDER : COL_BORDER,
+                showLoadConfirmation ? COL_LOAD_OK_TEXT : COL_GOLD
+        );
+        pobLoadRect = new Rectangle(pobButtonX, y, loadWidth, ROW_H);
 
         y += ROW_H + GAP;
 
         boolean hasLoadouts = loadoutKeys.size() > 1;
         String loadoutValue = loadoutKeys.isEmpty() ? "Default" : loadoutKeys.get(loadoutIndex);
         paintFieldCycleable(
-                g, x, y, w,
+                g, labelFont, valueFont, hintFont, x, y, w,
                 "Skill Loadout", loadoutValue,
                 hasLoadouts, loadoutIndex, Math.max(1, loadoutKeys.size())
         );
@@ -558,7 +607,7 @@ public class SettingsPanel extends JPanel {
         y += ROW_H + GAP;
 
         paintFieldCycleable(
-                g, x, y, w,
+                g, labelFont, valueFont, hintFont, x, y, w,
                 "Bandit Quest", BANDIT_OPTIONS[banditIndex],
                 true, banditIndex, BANDIT_OPTIONS.length
         );
@@ -577,11 +626,11 @@ public class SettingsPanel extends JPanel {
             int row = i / GRID_COLS;
             int cellX = x + col * (cellWidth + GAP);
             int cellY = y + row * (ROW_H + GAP);
-            boolean listening = listeningIdx == i;
+            boolean listening = hotkeyHandler.listeningIndex() == i;
             String display = listening ? "..."
                     : fieldEncoded[i] == 0 ? "-"
                     : HotkeyLabel.labelOf(fieldEncoded[i]);
-            paintField(g, cellX, cellY, cellWidth, ROW_LABELS[i], display, listening, true);
+            paintField(g, labelFont, valueFont, cellX, cellY, cellWidth, ROW_LABELS[i], display, listening, true);
             fieldRects[i] = new Rectangle(cellX, cellY, cellWidth, ROW_H);
         }
 
@@ -591,142 +640,26 @@ public class SettingsPanel extends JPanel {
         int halfWidth = (w - GAP) / 2;
 
         forceShowRect = new Rectangle(x, y, halfWidth, ROW_H);
-        g.setColor(overlayForceVisible ? BG_TOGGLE_ON : BG_TOGGLE_OFF);
-        g.fillRoundRect(x, y, halfWidth, ROW_H, ARC, ARC);
-        g.setColor(overlayForceVisible ? COL_TOGGLE_ON_BORDER : COL_TOGGLE_OFF_BORDER);
-        g.drawRoundRect(x, y, halfWidth, ROW_H, ARC, ARC);
-        g.setFont(valueFont);
-        g.setColor(overlayForceVisible ? COL_TOGGLE_ON_TEXT : COL_TOGGLE_OFF_TEXT);
-        fontMetrics = g.getFontMetrics();
-        String toggleText = overlayForceVisible ? "Overlay: Shown" : "Overlay: Hidden";
-        g.drawString(
-                toggleText,
-                x + (halfWidth - fontMetrics.stringWidth(toggleText)) / 2,
-                y + (ROW_H + fontMetrics.getAscent() - fontMetrics.getDescent()) / 2
+        paintButton(
+                g, valueFont,
+                x, y, halfWidth,
+                overlayForceVisible ? "Overlay: Shown" : "Overlay: Hidden",
+                overlayForceVisible ? BG_TOGGLE_ON : BG_TOGGLE_OFF,
+                overlayForceVisible ? COL_TOGGLE_ON_BORDER : COL_TOGGLE_OFF_BORDER,
+                overlayForceVisible ? COL_TOGGLE_ON_TEXT : COL_TOGGLE_OFF_TEXT
         );
 
         int recalX = x + halfWidth + GAP;
         recalibrateRect = new Rectangle(recalX, y, halfWidth, ROW_H);
-        g.setColor(showRecalibrateConfirmation ? BG_RECAL_OK : BG_SAVE);
-        g.fillRoundRect(recalX, y, halfWidth, ROW_H, ARC, ARC);
-        g.setColor(showRecalibrateConfirmation ? COL_RECAL_OK_BORDER : COL_BORDER);
-        g.drawRoundRect(recalX, y, halfWidth, ROW_H, ARC, ARC);
-        g.setFont(valueFont);
-        g.setColor(showRecalibrateConfirmation ? COL_RECAL_OK_TEXT : COL_GOLD);
-        fontMetrics = g.getFontMetrics();
-        String recalibrateText = showRecalibrateConfirmation ? "Done!" : "Recalibrate";
-        g.drawString(
-                recalibrateText,
-                recalX + (halfWidth - fontMetrics.stringWidth(recalibrateText)) / 2,
-                y + (ROW_H + fontMetrics.getAscent() - fontMetrics.getDescent()) / 2
+        paintButton(
+                g, valueFont,
+                recalX, y, halfWidth,
+                showRecalibrateConfirmation ? "Done!" : "Recalibrate",
+                showRecalibrateConfirmation ? BG_RECAL_OK : BG_SAVE,
+                showRecalibrateConfirmation ? COL_RECAL_OK_BORDER : COL_BORDER,
+                showRecalibrateConfirmation ? COL_RECAL_OK_TEXT : COL_GOLD
         );
 
         g.dispose();
-    }
-
-    private void paintFieldBackground(Graphics2D g, int x, int y, int w, String label, boolean active) {
-        g.setColor(active ? BG_LISTEN : BG_FIELD);
-        g.fillRoundRect(x, y, w, ROW_H, ARC, ARC);
-        g.setColor(active ? COL_ACTIVE_BORDER : COL_BORDER);
-        g.setStroke(new BasicStroke(1f));
-        g.drawRoundRect(x, y, w, ROW_H, ARC, ARC);
-        g.setFont(labelFont);
-        g.setColor(COL_LABEL);
-        FontMetrics labelMetrics = g.getFontMetrics();
-        int baseline = y + (ROW_H + labelMetrics.getAscent() - labelMetrics.getDescent()) / 2;
-        g.drawString(label, x + 12, baseline);
-    }
-
-    private int paintField(
-            Graphics2D g,
-            int x,
-            int y,
-            int w,
-            String label,
-            String value,
-            boolean active,
-            boolean rightAlign
-    ) {
-        g.setColor(active ? BG_LISTEN : BG_FIELD);
-        g.fillRoundRect(x, y, w, ROW_H, ARC, ARC);
-        g.setColor(active ? COL_ACTIVE_BORDER : COL_BORDER);
-        g.setStroke(new BasicStroke(1f));
-        g.drawRoundRect(x, y, w, ROW_H, ARC, ARC);
-
-        g.setFont(labelFont);
-        g.setColor(COL_LABEL);
-        FontMetrics labelMetrics = g.getFontMetrics();
-        int baseline = y + (ROW_H + labelMetrics.getAscent() - labelMetrics.getDescent()) / 2;
-        g.drawString(label, x + 12, baseline);
-
-        g.setFont(valueFont);
-        g.setColor(active ? COL_GOLD : COL_VALUE);
-        FontMetrics valueMetrics = g.getFontMetrics();
-        int valueBaseline = y + (ROW_H + valueMetrics.getAscent() - valueMetrics.getDescent()) / 2;
-
-        if (rightAlign) {
-            int valueX = x + w - valueMetrics.stringWidth(value) - 12;
-            g.drawString(value, valueX, valueBaseline);
-        } else {
-            int labelWidth = labelMetrics.stringWidth(label) + 20;
-            int availableWidth = w - labelWidth - 12;
-            String truncated = truncateToFit(value, valueMetrics, availableWidth);
-            g.drawString(truncated, x + labelWidth, valueBaseline);
-        }
-
-        return y + ROW_H + GAP;
-    }
-
-    private void paintFieldCycleable(
-            Graphics2D g,
-            int x,
-            int y,
-            int w,
-            String label,
-            String value,
-            boolean enabled,
-            int index,
-            int total
-    ) {
-        g.setColor(enabled ? BG_FIELD : BG_FIELD_DISABLED);
-        g.fillRoundRect(x, y, w, ROW_H, ARC, ARC);
-        g.setColor(enabled ? COL_BORDER : COL_BORDER_DISABLED);
-        g.setStroke(new BasicStroke(1f));
-        g.drawRoundRect(x, y, w, ROW_H, ARC, ARC);
-
-        g.setFont(labelFont);
-        g.setColor(enabled ? COL_LABEL : COL_DISABLED);
-        FontMetrics labelMetrics = g.getFontMetrics();
-        int baseline = y + (ROW_H + labelMetrics.getAscent() - labelMetrics.getDescent()) / 2;
-        g.drawString(label, x + 12, baseline);
-
-        g.setFont(hintFont);
-        g.setColor(enabled ? COL_HINT : COL_DISABLED);
-        FontMetrics hintMetrics = g.getFontMetrics();
-        String indicator = (index + 1) + "/" + total;
-        int indicatorX = x + w - hintMetrics.stringWidth(indicator) - 12;
-        int indicatorBaseline = y + (ROW_H + hintMetrics.getAscent() - hintMetrics.getDescent()) / 2;
-        g.drawString(indicator, indicatorX, indicatorBaseline);
-
-        g.setFont(valueFont);
-        g.setColor(enabled ? COL_VALUE : COL_DISABLED);
-        FontMetrics valueMetrics = g.getFontMetrics();
-        int valueBaseline = y + (ROW_H + valueMetrics.getAscent() - valueMetrics.getDescent()) / 2;
-        int indicatorWidth = hintMetrics.stringWidth(indicator) + 8;
-        int valueMaxX = x + w - indicatorWidth - 12;
-        int labelWidth = labelMetrics.stringWidth(label) + 20;
-        int availableWidth = valueMaxX - (x + labelWidth);
-        String truncated = truncateToFit(value, valueMetrics, availableWidth);
-        g.drawString(truncated, x + labelWidth, valueBaseline);
-    }
-
-    private String truncateToFit(String text, FontMetrics metrics, int maxWidth) {
-        if (metrics.stringWidth(text) <= maxWidth) return text;
-        String ellipsis = "...";
-        for (int i = text.length() - 1; i >= 0; i--) {
-            String candidate = ellipsis + text.substring(text.length() - i);
-            if (metrics.stringWidth(candidate) <= maxWidth) return candidate;
-        }
-        return ellipsis;
     }
 }

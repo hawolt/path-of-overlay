@@ -23,6 +23,7 @@ public class Settings {
     private static final String KEY_HOTKEY_MOVE = "hotkey.move";
     private static final String KEY_HOTKEY_NEXT = "hotkey.next";
     private static final String KEY_HOTKEY_PREV = "hotkey.prev";
+    private static final String KEY_GUIDE_FILE = "guide.file";
     private static final String KEY_POB_INPUT = "pob.input";
     private static final String KEY_LOG_PATH = "log.path";
     private static final String KEY_LOADOUT = "loadout";
@@ -53,6 +54,14 @@ public class Settings {
 
     public void setLogPath(String path) {
         properties.setProperty(KEY_LOG_PATH, path);
+    }
+
+    public String getGuideFile() {
+        return properties.getProperty(KEY_GUIDE_FILE, "");
+    }
+
+    public void setGuideFile(String path) {
+        properties.setProperty(KEY_GUIDE_FILE, path);
     }
 
     public String getPobInput() {

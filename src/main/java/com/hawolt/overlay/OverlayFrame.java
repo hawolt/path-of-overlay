@@ -115,6 +115,11 @@ public class OverlayFrame {
         }
     }
 
+    public void setGuidePath(String path) {
+        Logger.info("[Overlay] setGuidePath: {}", path);
+        guidePanel.setGuidePath(path);
+    }
+
     public void setActiveClass(String className) {
         Logger.info("[Overlay] Active class set to: {}", className);
         guidePanel.setActiveClass(className);

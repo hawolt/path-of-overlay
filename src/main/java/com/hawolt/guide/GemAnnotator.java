@@ -92,8 +92,13 @@ public class GemAnnotator {
         List<Segment> segments = new ArrayList<>(rawStep.getSegments());
         segments.add(Segment.lineBreak());
         segments.add(Segment.text("Pick ", null));
-        segments.add(Segment.text(gemName, mappingConfig.colorForGem(gemName)));
-        return new GuideStep(segments, rawStep.getQuestName(), rawStep.getActNumber(), rawStep.getBanditRequirements());
+        appendGemWithSupportTarget(segments, gemName, gemRequirements);
+        return new GuideStep(
+                segments,
+                rawStep.getQuestName(),
+                rawStep.getActNumber(),
+                rawStep.getBanditRequirements()
+        );
     }
 
     private GuideStep buildVendorStep(
@@ -118,9 +123,22 @@ public class GemAnnotator {
         for (String gemName : vendorGems) {
             segments.add(Segment.lineBreak());
             segments.add(Segment.text("- ", null));
-            segments.add(Segment.text(gemName, mappingConfig.colorForGem(gemName)));
+            appendGemWithSupportTarget(segments, gemName, gemRequirements);
         }
 
         return new GuideStep(segments, null, 0, banditRequirements);
+    }
+
+    private void appendGemWithSupportTarget(
+            List<Segment> segments,
+            String gemName,
+            GemRequirements gemRequirements
+    ) {
+        segments.add(Segment.text(gemName, mappingConfig.colorForGem(gemName)));
+        String supportTarget = gemRequirements.getSupportTarget(gemName);
+        if (supportTarget != null) {
+            segments.add(Segment.text(" for ", null));
+            segments.add(Segment.text(supportTarget, mappingConfig.colorForGem(supportTarget)));
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.hawolt;
 
 import com.hawolt.data.BuildCodeParser;
+import com.hawolt.data.GemRequirements;
 import com.hawolt.guide.ActTimer;
 import com.hawolt.hotkey.HotkeyLabel;
 import com.hawolt.logger.Logger;
@@ -47,6 +48,12 @@ public class Main {
         while (overlayRef[0] == null) Thread.sleep(10);
         OverlayFrame overlay = overlayRef[0];
         Logger.info("[Main] OverlayFrame created");
+
+        String savedGuideFile = settings.getGuideFile();
+        if (savedGuideFile != null && !savedGuideFile.isBlank()) {
+            Logger.info("[Main] Applying saved guide file on startup: {}", savedGuideFile);
+            SwingUtilities.invokeLater(() -> overlay.setGuidePath(savedGuideFile));
+        }
 
         String savedPob = settings.getPobInput();
         if (savedPob != null && !savedPob.isBlank()) {
@@ -152,23 +159,14 @@ public class Main {
                                 settings.getHotkeySettings()
                         );
 
-                        registerOne(platform, 1, settings.getHotkeyNext(), "Next");
-                        registerOne(platform, 2, settings.getHotkeyPrev(), "Prev");
-                        registerOne(platform, 3, settings.getHotkeyMove(), "Move");
-                        registerOne(platform, 4, settings.getHotkeyTimer(), "Timer");
-                        registerOne(platform, 5, settings.getHotkeySettings(), "Settings");
-                        registerOne(platform, 6, settings.getHotkeyPause(), "Pause");
-                        boolean reloadOk = platform.registerHotKey(7, Config.VK_RELOAD_GUIDE, Config.MOD_NOREPEAT);
-                        Logger.info(
-                                "[HotkeyPump] id=7 label=ReloadGuide vk=0x{} mod=0x{} ok={}",
-                                Integer.toHexString(Config.VK_RELOAD_GUIDE),
-                                Integer.toHexString(Config.MOD_NOREPEAT),
-                                reloadOk
-                        );
+                        registerOne(platform, 1, settings.getHotkeyNext(), "next");
+                        registerOne(platform, 2, settings.getHotkeyPrev(), "prev");
+                        registerOne(platform, 3, settings.getHotkeyMove(), "move");
+                        registerOne(platform, 4, settings.getHotkeyTimer(), "timer");
+                        registerOne(platform, 5, settings.getHotkeySettings(), "settings");
+                        registerOne(platform, 6, settings.getHotkeyPause(), "pause");
 
-                        Logger.info("[HotkeyPump] Entering GetMessage loop");
                         platform.runHotKeyLoop(id -> {
-                            Logger.info("[HotkeyPump] Hotkey fired: id={}", id);
                             switch (id) {
                                 case 1 -> {
                                     Logger.info("[HotkeyPump] Dispatching: next");
@@ -189,9 +187,11 @@ public class Main {
                                 case 5 -> {
                                     Logger.info("[HotkeyPump] Dispatching: openSettings");
                                     SettingsOverlay settingsOverlay = settingsRef.get();
-                                    if (settingsOverlay != null) SwingUtilities.invokeLater(settingsOverlay::toggle);
-                                    else
+                                    if (settingsOverlay != null) {
+                                        SwingUtilities.invokeLater(settingsOverlay::toggle);
+                                    } else {
                                         Logger.warn("[HotkeyPump] settingsRef is null - settings overlay not ready yet");
+                                    }
                                 }
                                 case 6 -> {
                                     Logger.info("[HotkeyPump] Dispatching: toggleTimerPause");
@@ -280,6 +280,11 @@ public class Main {
                     },
                     suspendHotkeys,
                     resumeHotkeys,
+                    () -> SwingUtilities.invokeLater(() -> {
+                        overlay.setGemRequirements(GemRequirements.empty());
+                        SettingsOverlay current = settingsRef.get();
+                        if (current != null) current.setLoadouts(new JSONObject(), "Default");
+                    }),
                     pobInput -> {
                         if (pobInput == null || pobInput.isBlank()) return;
                         Logger.info("[Main] PoB input received, parsing build");
@@ -290,7 +295,12 @@ public class Main {
                             parsed = BuildCodeParser.fetchFromBuild(pobInput);
                         }
                         if (parsed.isEmpty()) {
-                            Logger.warn("[Main] PoB parse returned empty result");
+                            Logger.warn("[Main] PoB parse returned empty result - clearing gem requirements");
+                            SwingUtilities.invokeLater(() -> {
+                                overlay.setGemRequirements(GemRequirements.empty());
+                                SettingsOverlay current = settingsRef.get();
+                                if (current != null) current.setLoadouts(new JSONObject(), "Default");
+                            });
                             return;
                         }
                         String bandit = parsed.optString("bandit", "Kill all");
@@ -312,7 +322,8 @@ public class Main {
                                 bandit,
                                 loadouts != null ? loadouts.keySet() : "none"
                         );
-                    }
+                    },
+                    guideFile -> SwingUtilities.invokeLater(() -> overlay.setGuidePath(guideFile))
             );
             settingsOverlay.onGameRunningChanged(watchdog.isRunning());
             Logger.info("[Main] SettingsOverlay created, initial gameRunning={}", watchdog.isRunning());

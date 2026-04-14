@@ -56,6 +56,7 @@ public class GuidePanel extends JPanel {
     private Consumer<Dimension> onSizeNeeded;
     private Runnable onResizeToContent;
     private String activeBandit = "Kill all";
+    private String guidePath = "road.map";
     private ActTimer actTimer;
     private int stepIndex = 0;
     private boolean timerVisibleBeforeMoveMode = false;
@@ -102,19 +103,10 @@ public class GuidePanel extends JPanel {
         rebuildDisplaySteps();
     }
 
-    private void rebuildDisplaySteps() {
-        int anchorRawIndex = displaySteps.isEmpty() ? 0 : displaySteps.get(stepIndex).rawIndex();
-        displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
-
-        int newStepIndex = 0;
-        for (int i = 0; i < displaySteps.size(); i++) {
-            if (displaySteps.get(i).rawIndex() == anchorRawIndex) {
-                newStepIndex = i;
-                break;
-            }
-        }
-        stepIndex = Math.min(newStepIndex, Math.max(0, displaySteps.size() - 1));
-
+    public void setGuidePath(String path) {
+        this.guidePath = path == null || path.isBlank() ? "road.map" : path;
+        loadFromPath(this.guidePath);
+        stepIndex = 0;
         if (onResizeToContent != null) onResizeToContent.run();
         repaint();
     }
@@ -214,16 +206,42 @@ public class GuidePanel extends JPanel {
     }
 
     public void reloadSteps() {
+        loadFromPath(guidePath);
+        stepIndex = Math.min(stepIndex, Math.max(0, displaySteps.size() - 1));
+        if (onResizeToContent != null) onResizeToContent.run();
+        repaint();
+    }
+
+    private void rebuildDisplaySteps() {
+        int anchorRawIndex = displaySteps.isEmpty() ? 0 : displaySteps.get(stepIndex).rawIndex();
+        displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
+
+        int newStepIndex = 0;
+        for (int i = 0; i < displaySteps.size(); i++) {
+            if (displaySteps.get(i).rawIndex() == anchorRawIndex) {
+                newStepIndex = i;
+                break;
+            }
+        }
+        stepIndex = Math.min(newStepIndex, Math.max(0, displaySteps.size() - 1));
+
+        if (onResizeToContent != null) onResizeToContent.run();
+        repaint();
+    }
+
+    private void loadSteps() {
+        loadFromPath(guidePath);
+    }
+
+    private void loadFromPath(String path) {
+        Logger.info("[GuidePanel] Loading guide from {}", path);
         try {
             GuideParser parser = new GuideParser(mappingConfig);
-            rawSteps = parser.load("road.map");
+            rawSteps = parser.load(path);
             displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
-            stepIndex = Math.min(stepIndex, Math.max(0, displaySteps.size() - 1));
-            Logger.info("[GuidePanel] Reloaded {} steps.", displaySteps.size());
-            if (onResizeToContent != null) onResizeToContent.run();
-            repaint();
+            Logger.info("[GuidePanel] Loaded {} steps from {}", displaySteps.size(), path);
         } catch (IOException exception) {
-            Logger.error("[GuidePanel] Failed to reload road.map: {}", exception.getMessage());
+            Logger.error("[GuidePanel] Failed to load {}: {}", path, exception.getMessage());
         }
     }
 
@@ -287,20 +305,15 @@ public class GuidePanel extends JPanel {
             totalHeight += boxHeight + GAP;
         }
 
-        totalHeight = totalHeight - GAP + PADDING * 2;
+        if (totalHeight == 0) {
+            totalHeight = 50 + PADDING * 2;
+            if (totalWidth < 300) totalWidth = 300;
+        } else {
+            totalHeight = totalHeight - GAP + PADDING * 2;
+        }
+
         int timerBlockHeight = timerRowHeight + PADDING + TIMER_GAP;
         return new Dimension(totalWidth + PADDING * 2 + 2, totalHeight + timerBlockHeight + 2);
-    }
-
-    private void loadSteps() {
-        try {
-            GuideParser parser = new GuideParser(mappingConfig);
-            rawSteps = parser.load("road.map");
-            displaySteps = gemAnnotator.buildDisplayList(rawSteps, gemRequirements, activeBandit);
-            Logger.info("[GuidePanel] Loaded {} steps.", displaySteps.size());
-        } catch (IOException exception) {
-            Logger.error("[GuidePanel] Failed to load road.map: {}", exception.getMessage());
-        }
     }
 
     @Override

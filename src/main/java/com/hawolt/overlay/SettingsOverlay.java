@@ -36,7 +36,9 @@ public class SettingsOverlay {
             Consumer<Boolean> onSettingsOpenChanged,
             Runnable onSuspendHotkeys,
             Runnable onResumeHotkeys,
-            Consumer<String> onPobLoad
+            Runnable onPobClear,
+            Consumer<String> onPobLoad,
+            Consumer<String> onGuideFileChanged
     ) {
         this.platform = platform;
         this.robot = createRobot();
@@ -59,7 +61,9 @@ public class SettingsOverlay {
                 this::requestKeyFocus,
                 onSuspendHotkeys,
                 onResumeHotkeys,
-                onPobLoad
+                onPobClear,
+                onPobLoad,
+                onGuideFileChanged
         );
 
         dialog.setContentPane(panel);
