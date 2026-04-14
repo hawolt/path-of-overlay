@@ -58,17 +58,16 @@ public class Main {
                 parsed = BuildCodeParser.fetchFromBuild(savedPob);
             }
             if (!parsed.isEmpty()) {
-                String bandit = parsed.optString("bandit", "Kill all");
                 JSONObject loadouts = parsed.optJSONObject("loadouts");
                 String savedLoadout = settings.getLoadout();
-                settings.setBandit(bandit);
+                String savedBandit = settings.getBandit();
                 SwingUtilities.invokeLater(() -> {
-                    overlay.setBandit(bandit);
+                    overlay.setBandit(savedBandit);
                     if (loadouts != null && !loadouts.isEmpty()) {
                         overlay.setLoadouts(loadouts, savedLoadout);
                     }
                 });
-                Logger.info("[Main] Saved PoB applied successfully - bandit={} loadout={}", bandit, savedLoadout);
+                Logger.info("[Main] Saved PoB applied successfully - bandit={} loadout={}", savedBandit, savedLoadout);
             } else {
                 Logger.warn("[Main] Saved PoB parse returned empty result");
             }

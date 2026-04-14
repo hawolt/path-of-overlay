@@ -22,6 +22,7 @@ public class WindowsPlatform implements Platform {
 
     private static final String GAME_WINDOW_TITLE = "Path of Exile";
     private static final int GWL_EXSTYLE = -20;
+    private static final int WS_EX_NOACTIVATE = 0x08000000;
     private static final int WS_EX_LAYERED = 0x00080000;
     private static final int WS_EX_TRANSPARENT = 0x00000020;
     private static final int WM_HOTKEY = 0x0312;
@@ -76,7 +77,7 @@ public class WindowsPlatform implements Platform {
         WindowsNative.INSTANCE.SetWindowLongPtr(
                 h,
                 GWL_EXSTYLE,
-                new Pointer((v | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT)
+                new Pointer((v | WS_EX_LAYERED) & ~WS_EX_TRANSPARENT & ~WS_EX_NOACTIVATE)
         );
         Logger.debug("[WindowsPlatform] makeInteractable applied");
     }

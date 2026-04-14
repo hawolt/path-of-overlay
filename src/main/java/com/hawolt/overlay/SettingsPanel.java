@@ -135,11 +135,6 @@ public class SettingsPanel extends JPanel {
     public void addNotify() {
         super.addNotify();
         revalidate();
-        SwingUtilities.invokeLater(() -> {
-            Window parentWindow = SwingUtilities.getWindowAncestor(this);
-            if (parentWindow != null) parentWindow.toFront();
-            pobTextField.requestFocusInWindow();
-        });
     }
 
     @Override
@@ -296,9 +291,7 @@ public class SettingsPanel extends JPanel {
 
                 if (mouseEvent.getButton() == MouseEvent.BUTTON1 && pobTextField.getBounds().contains(point)) {
                     stopListening();
-                    Window parentWindow = SwingUtilities.getWindowAncestor(SettingsPanel.this);
-                    if (parentWindow != null) parentWindow.toFront();
-                    SwingUtilities.invokeLater(pobTextField::requestFocusInWindow);
+                    pobTextField.requestFocusInWindow();
                     return;
                 }
 

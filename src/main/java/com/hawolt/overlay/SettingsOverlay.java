@@ -69,8 +69,21 @@ public class SettingsOverlay {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent windowEvent) {
-                Logger.info("[SettingsOverlay] windowOpened - calling makeInteractable");
+                Logger.info("[SettingsOverlay] windowOpened - clearing WS_EX_NOACTIVATE and requesting activation");
                 platform.makeInteractable(dialog);
+                dialog.toFront();
+                dialog.requestFocus();
+            }
+
+            @Override
+            public void windowActivated(WindowEvent windowEvent) {
+                Logger.info("[SettingsOverlay] windowActivated - requesting focus on panel");
+                panel.requestFocusInWindow();
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent windowEvent) {
+                Logger.info("[SettingsOverlay] windowDeactivated");
             }
 
             @Override
@@ -82,20 +95,8 @@ public class SettingsOverlay {
             public void windowClosing(WindowEvent windowEvent) {
                 Logger.info("[SettingsOverlay] windowClosing");
             }
-
-            @Override
-            public void windowDeactivated(WindowEvent windowEvent) {
-                Logger.info("[SettingsOverlay] windowDeactivated");
-            }
-
-            @Override
-            public void windowActivated(WindowEvent windowEvent) {
-                Logger.info("[SettingsOverlay] windowActivated");
-            }
         });
 
-        dialog.setVisible(true);
-        dialog.setVisible(false);
         Logger.info("[SettingsOverlay] Init complete. robot={}", robot != null ? "ok" : "null (AWTException)");
     }
 
@@ -181,7 +182,6 @@ public class SettingsOverlay {
                 dialog.getSize()
         );
         dialog.setVisible(true);
-        requestKeyFocus();
         shown = true;
         onSettingsOpenChanged.accept(true);
         Logger.info("[SettingsOverlay] show() complete");
