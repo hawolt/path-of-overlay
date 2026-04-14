@@ -303,6 +303,7 @@ public class Main {
                                 current.setBandit(bandit);
                                 if (loadouts != null && !loadouts.isEmpty()) {
                                     current.setLoadouts(loadouts, savedLoadout);
+                                    overlay.setLoadouts(loadouts, savedLoadout);
                                 }
                             }
                         });

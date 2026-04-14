@@ -145,32 +145,43 @@ public class BuildCodeParser {
             for (int i = 0; i < skillSets.getLength(); i++) {
                 Element skillSetElement = (Element) skillSets.item(i);
                 String title = skillSetElement.getAttribute("title");
-                if (title == null || title.isBlank()) {
+                if (title.isBlank()) {
                     title = "Default";
                 }
 
-                Map<String, Integer> gems = new LinkedHashMap<>();
-
-                NodeList gemNodes = skillSetElement.getElementsByTagName("Gem");
-                for (int j = 0; j < gemNodes.getLength(); j++) {
-                    Element gemElement = (Element) gemNodes.item(j);
-                    String nameSpec = gemElement.getAttribute("nameSpec");
-                    String countStr = gemElement.getAttribute("count");
-                    if (nameSpec == null || nameSpec.isBlank()) continue;
-                    int count = 1;
-                    if (countStr != null && !countStr.isBlank() && !"nil".equals(countStr)) {
-                        try {
-                            count = Integer.parseInt(countStr);
-                        } catch (NumberFormatException ignored) {
+                Map<String, Map<String, Integer>> setup = new LinkedHashMap<>();
+                NodeList skills = skillSetElement.getElementsByTagName("Skill");
+                for (int j = 0; j < skills.getLength(); j++) {
+                    NodeList skillNodes = skills.item(j).getChildNodes();
+                    String link = String.join("-", "link", String.valueOf(j));
+                    setup.put(link, new LinkedHashMap<>());
+                    NodeList gemNodes = ((Element) skillNodes).getElementsByTagName("Gem");
+                    for (int k = 0; k < gemNodes.getLength(); k++) {
+                        Element gemElement = (Element) gemNodes.item(k);
+                        String variantId = gemElement.getAttribute("variantId");
+                        String nameSpec = gemElement.getAttribute("nameSpec");
+                        String countStr = gemElement.getAttribute("count");
+                        if (nameSpec.isBlank() || variantId.isBlank()) continue;
+                        int count = 1;
+                        if (!countStr.isBlank() && !"nil".equals(countStr)) {
+                            try {
+                                count = Integer.parseInt(countStr);
+                            } catch (NumberFormatException ignored) {
+                            }
                         }
+                        nameSpec = variantId.startsWith("Support") ? String.join(" ", nameSpec, "Support") : nameSpec;
+                        setup.get(link).merge(nameSpec, count, Integer::sum);
                     }
-                    gems.merge(nameSpec, count, Integer::sum);
                 }
 
-                if (!gems.isEmpty()) {
+                if (!setup.isEmpty()) {
                     JSONObject skillSetObject = new JSONObject();
-                    for (Map.Entry<String, Integer> entry : gems.entrySet()) {
-                        skillSetObject.put(entry.getKey(), entry.getValue());
+                    for (Map.Entry<String, Map<String, Integer>> entry : setup.entrySet()) {
+                        JSONObject link = new JSONObject();
+                        for (Map.Entry<String, Integer> gem : entry.getValue().entrySet()) {
+                            link.put(gem.getKey(), gem.getValue());
+                        }
+                        skillSetObject.put(entry.getKey(), link);
                     }
                     loadouts.put(title, skillSetObject);
                 }
@@ -195,6 +206,8 @@ public class BuildCodeParser {
 
             result.put("loadouts", loadouts);
             result.put("bandit", bandit);
+
+            System.err.println(result);
 
             Logger.info("[BuildCodeParser] Extracted {} skill sets from POB XML", result.length());
             return result;
