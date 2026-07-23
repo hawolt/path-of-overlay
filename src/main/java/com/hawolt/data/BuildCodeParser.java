@@ -207,8 +207,6 @@ public class BuildCodeParser {
             result.put("loadouts", loadouts);
             result.put("bandit", bandit);
 
-            System.err.println(result);
-
             Logger.info("[BuildCodeParser] Extracted {} skill sets from POB XML", result.length());
             return result;
 

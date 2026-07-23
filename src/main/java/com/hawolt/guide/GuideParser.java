@@ -151,6 +151,13 @@ public class GuideParser {
                 segments.add(Segment.zone(zoneName, mappingConfig.colorForType("zone"), zoneLevel));
                 segments.add(Segment.image(loadImage("town.png"), "town.png"));
             }
+            case "regex" -> {
+                segments.add(Segment.clipboard(
+                        "The text has been put in your clipboard",
+                        mappingConfig.colorForType("hotkey"),
+                        tokenValue
+                ));
+            }
             case "bandit" -> {
             }
             case "npc" -> segments.add(Segment.text(tokenValue, mappingConfig.colorForType("npc")));

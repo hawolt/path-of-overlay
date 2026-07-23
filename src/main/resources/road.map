@@ -13,7 +13,8 @@ Enter {zone:The Submerged Passage}
 Enter {zone:The Tidal Island}
 Find and kill {enemy:Hailrake}, take {item:Medicine Chest}{br}Recommended Level: 4
 {logout:} to travel to {zone:Lioneye's Watch|level:13}
-Hand in {quest:Breaking Some Eggs}
+Hand in {quest:Breaking Some Eggs (1)}
+Hand in {quest:Breaking Some Eggs (2)}
 Hand in {quest:Mercy Mission}
 {waypoint:Waypoint} to travel to {zone:The Submerged Passage}
 Find bridge, place {portal:Portal}
@@ -26,15 +27,14 @@ Enter {zone:The Flooded Depths}{br}Go right of the bridge
 Find and kill {enemy:The Dweller of the Deep}{br}Search opposite the entrance{br}Look for the large empty room
 {logout:} to travel to {zone:Lioneye's Watch|level:13}
 Hand in {quest:The Dweller of the Deep}
-Hand in {quest:The Caged Brute}
+Hand in {quest:The Caged Brute (1)}
 {waypoint:Waypoint} to travel to {zone:The Lower Prison|level:8}
 Complete {trial:Trial of Ascendancy}
 Enter {zone:The Upper Prison}
 Optionally find {npc:Chemist's Strongbox}{br}Look for map icon, access with nearby switch{br}High chance for {npc:Quicksilver Flask}
 Proceed to {zone:The Warden's Quarters}, kill {enemy:Brutus, Lord Incarcerator}{br}Recommended Level: 8
-Enter {zone:Prisoner's Gate|level:10}
-{waypoint:Waypoint} to travel to {zone:Lioneye's Watch|level:13}
-Hand in {quest:The Caged Brute}
+{logout:} to travel to {zone:Lioneye's Watch|level:13}
+Hand in {quest:The Caged Brute (2)}
 {waypoint:Waypoint} to travel to {zone:Prisoner's Gate|level:10}
 Enter {zone:The Ship Graveyard}{br}Go down the ledge next to the road
 Find {zone:The Ship Graveyard Cave}, place {portal:Portal}
@@ -43,7 +43,8 @@ Enter {zone:The Cavern of Wrath}
 Take {portal:Portal} to travel to {zone:The Ship Graveyard}
 Enter {zone:The Ship Graveyard Cave}
 Find {item:Slave Girl}, take {item:Allflame}{br}Search opposite the entrance
-Enter {zone:The Ship Graveyard}, kill {enemy:Captain Fairgraves}
+Enter {zone:The Ship Graveyard}
+Kill {enemy:Captain Fairgraves}
 {logout:} to travel to {zone:Lioneye's Watch|level:13}
 Hand in {quest:The Marooned Mariner}
 Hand in {quest:The Siren's Cadence}
@@ -103,7 +104,7 @@ Hand in {quest:Sharp and Cruel}
 {bandit:Help Oak}{waypoint:Waypoint} to travel to {zone:The Riverways|level:15}
 {bandit:Help Oak}Enter {zone:The Wetlands|level:19}{br}Look for 2 pillars near {waypoint:Waypoint}, follow the trail
 {bandit:Help Oak}Help {enemy:Oak, Skullbreaker}, take {item:The Apex}
-{bandit:Help Alira}{bandit:Help Kraityn}{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19} {npc:Act 2}
+{bandit:Help Alira}{bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19} {npc:Act 2}
 {bandit:Help Kraityn}{waypoint:Waypoint} to travel to {zone:The Western Forest|level:17}{br}Search opposite direction of the encampment entrance
 {bandit:Help Kraityn}Find and kill {enemy:Alira Darktongue}, take {item:Alira's Amulet}{br}Go look for the torch touching the road{br}Follow the trail in the direction of the torch
 {bandit:Help Kraityn}Kill {enemy:Captain Arteri}{br}Follow the road
@@ -130,6 +131,7 @@ Hand in {quest:Sharp and Cruel}
 {bandit:Kill all}Find and kill {enemy:Oak, Skullbreaker}, take {item:Oak's Amulet}
 {bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Forest Encampment}
 {bandit:Kill all}Hand in {quest:Deal with the Bandits}, take {item:The Apex}
+{bandit:Kill all}{waypoint:Waypoint} to travel to {zone:The Wetlands|level:19}
 Poison the {item:Tree Roots} to travel to {zone:The Vaal Ruins}
 Enter {zone:The Northern Forest|level:21}{br}S shape or L shape leads to exit
 Enter {zone:The Caverns}
@@ -175,7 +177,7 @@ Find and take {item:Thaumetic Sulphite}
 {waypoint:Waypoint} to travel to {zone:The Solaris Temple Level 2|level:28}
 Talk to {npc:Lady Dialla}
 Hand in {quest:The Ribbon Spool}
-Hand in {quest:Fiery Dust} , take {item:Infernal Talc}
+Hand in {quest:Fiery Dust}, take {item:Infernal Talc}
 {waypoint:Waypoint} to travel to {zone:The Sewers}
 Burn the {item:Undying Blockage}
 Get {crafting:Physical Damage - Rank 1}
@@ -358,7 +360,7 @@ Proceed to {zone:Maligaro's Workshop}, kill {enemy:Maligaro, the Artist}, take {
 Hand in {quest:Essence of the Artist}
 Hand in {quest:The Silver Locket}
 {waypoint:Waypoint} to travel to {zone:The Chamber of Sins Level 1|level:52}
-Hand in {quest:Web of Secrets} , take {item:Obsidian Key}
+Hand in {quest:Web of Secrets}, take {item:Obsidian Key}
 Enter {zone:The Chamber of Sins Level 2|level:52}{br}Go in same direction as {waypoint:Waypoint}
 Complete {trial:Trial of Ascendancy}
 Get {crafting:Mana Regen - Rank 1}
@@ -456,12 +458,12 @@ Get {crafting:Spell Damage - Rank 3}
 {logout:} to travel to {zone:Highgate|level:67}
 Talk to {npc:Sin}
 Hand in {quest:The Storm Blade}
-Hand in {quest:Queen of the Sands} , take {item:Bottled Storm}
+Hand in {quest:Queen of the Sands (1)}, take {item:Bottled Storm}
 {waypoint:Waypoint} to travel to {zone:The Vastiri Desert}
 Enter {zone:The Oasis}
 Proceed to {zone:The Sand Pit}, kill {enemy:Shakari, Queen of the Sands}
 {logout:} to travel to {zone:Highgate|level:67}
-Hand in {quest:Queen of the Sands}
+Hand in {quest:Queen of the Sands (2)}
 {waypoint:Waypoint} to travel to {zone:The Foothills}
 Enter {zone:The Tunnel}
 Before {waypoint:Waypoint}, complete {trial:Trial of Ascendancy}

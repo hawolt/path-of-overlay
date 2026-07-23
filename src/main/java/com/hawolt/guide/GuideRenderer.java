@@ -78,7 +78,7 @@ public class GuideRenderer {
                 continue;
             }
 
-            if (segment.type == Segment.Type.TEXT && segment.text != null) {
+            if ((segment.type == Segment.Type.TEXT || segment.type == Segment.Type.CLIPBOARD) && segment.text != null) {
                 Color color = segment.color != null ? segment.color : Color.WHITE;
                 String text = previousWasImage ? segment.text.stripLeading() : segment.text;
                 if (text.isEmpty()) {

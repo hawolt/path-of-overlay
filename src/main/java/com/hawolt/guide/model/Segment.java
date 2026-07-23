@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Segment {
 
-    public enum Type {TEXT, IMAGE, LINEBREAK}
+    public enum Type {TEXT, IMAGE, LINEBREAK, CLIPBOARD}
 
     public final Type type;
     public final String text;
@@ -32,6 +32,10 @@ public class Segment {
 
     public static Segment image(Image image, String altText) {
         return new Segment(Type.IMAGE, null, null, image, altText, 0);
+    }
+
+    public static Segment clipboard(String displayText, Color color, String clipboardValue) {
+        return new Segment(Type.CLIPBOARD, displayText, color, null, clipboardValue, 0);
     }
 
     public static Segment lineBreak() {

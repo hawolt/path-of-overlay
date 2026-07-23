@@ -166,6 +166,12 @@ public class Main {
                         registerOne(platform, 5, settings.getHotkeySettings(), "settings");
                         registerOne(platform, 6, settings.getHotkeyPause(), "pause");
 
+                        boolean reloadOk = platform.registerHotKey(7, Config.VK_RELOAD_GUIDE, Config.MOD_NOREPEAT);
+                        Logger.info("[HotkeyPump] id=7 label=ReloadGuide vk=0x{} mod=0x{} ok={}",
+                                Integer.toHexString(Config.VK_RELOAD_GUIDE),
+                                Integer.toHexString(Config.MOD_NOREPEAT),
+                                reloadOk);
+
                         platform.runHotKeyLoop(id -> {
                             switch (id) {
                                 case 1 -> {

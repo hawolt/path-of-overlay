@@ -6,10 +6,12 @@ import com.hawolt.data.MappingConfig;
 import com.hawolt.data.RewardsConfig;
 import com.hawolt.guide.GemAnnotator.DisplayEntry;
 import com.hawolt.guide.model.GuideStep;
+import com.hawolt.guide.model.Segment;
 import com.hawolt.logger.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,6 +132,7 @@ public class GuidePanel extends JPanel {
                 () -> {
                     stepIndex = nextIndex;
                     if (nextIsSmaller && onSizeNeeded != null) onSizeNeeded.accept(nextSize);
+                    applyClipboard(displaySteps.get(stepIndex).step());
                 }
         );
     }
@@ -148,6 +151,7 @@ public class GuidePanel extends JPanel {
                 () -> {
                     stepIndex = prevIndex;
                     if (prevIsSmaller && onSizeNeeded != null) onSizeNeeded.accept(prevSize);
+                    applyClipboard(displaySteps.get(stepIndex).step());
                 }
         );
     }
@@ -249,6 +253,19 @@ public class GuidePanel extends JPanel {
         return plainText.contains("enter") || plainText.contains("to travel to");
     }
 
+    private void applyClipboard(GuideStep step) {
+        step.getSegments().stream()
+                .filter(s -> s.type == Segment.Type.CLIPBOARD)
+                .map(s -> s.altText)
+                .filter(v -> v != null && !v.isBlank())
+                .findFirst()
+                .ifPresent(value -> {
+                    StringSelection selection = new StringSelection(value);
+                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+                    Logger.info("[GuidePanel] Copied regex to clipboard: {}", value);
+                });
+    }
+
     private void updateActTimer(String zoneName, int areaLevel) {
         if (actTimer != null) {
             actTimer.onZoneEntered(zoneName, areaLevel);
@@ -283,6 +300,7 @@ public class GuidePanel extends JPanel {
                     () -> {
                         stepIndex = targetIndex;
                         if (targetIsSmaller && onSizeNeeded != null) onSizeNeeded.accept(targetSize);
+                        applyClipboard(displaySteps.get(stepIndex).step());
                     }
             );
         });

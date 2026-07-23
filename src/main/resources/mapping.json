@@ -17,12 +17,11 @@
   "quest_npcs": {
     "Enemy at the Gate": "Tarkleigh",
     "Mercy Mission": "Nessa",
-    "Breaking Some Eggs": "Tarkleigh",
+    "Breaking Some Eggs (1)": "Tarkleigh",
+    "Breaking Some Eggs (2)": "Tarkleigh",
     "The Dweller of the Deep": "Tarkleigh",
-    "The Caged Brute": [
-      "Nessa",
-      "Tarkleigh"
-    ],
+    "The Caged Brute (1)": "Nessa",
+    "The Caged Brute (2)": "Tarkleigh",
     "The Marooned Mariner": "Bestel",
     "The Siren's Cadence": "Nessa",
     "The Great White Beast": "Yeena",
@@ -62,10 +61,8 @@
     "Love is Dead": "Clarissa",
     "Reflection of Terror": "Hargan",
     "The Storm Blade": "Petarus and Vanja",
-    "Queen of the Sands": [
-      "Petarus and Vanja",
-      "Irasha"
-    ],
+    "Queen of the Sands (1)": "Petarus and Vanja",
+    "Queen of the Sands (2)": "Irasha",
     "The Ruler of Highgate": "Irasha",
     "Safe Passage": "Lani",
     "Vilenta's Vengeance": "Lani",

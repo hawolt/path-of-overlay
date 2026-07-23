@@ -8,13 +8,12 @@ public class SlideAnimator {
     private static final int FPS = 60;
     private static final int DURATION_MS = 180;
     private static final int TICK_DELAY = 1000 / FPS;
-    private static final int TOTAL_TICKS = DURATION_MS / TICK_DELAY;
 
     public enum Direction {FORWARD, BACKWARD}
 
     private Timer timer;
     private float progress = 1f;
-    private int tick = 0;
+    private long startTime;
     private Direction direction = Direction.FORWARD;
     private Runnable onMidpoint;
 
@@ -30,14 +29,14 @@ public class SlideAnimator {
 
         if (timer != null && timer.isRunning()) timer.stop();
 
-        tick = 0;
         progress = 0f;
+        startTime = System.nanoTime();
 
         if (preStart != null) preStart.run();
 
         ActionListener onTick = event -> {
-            tick++;
-            progress = Math.min(1f, (float) tick / TOTAL_TICKS);
+            long elapsedMs = (System.nanoTime() - startTime) / 1_000_000L;
+            progress = Math.min(1f, (float) elapsedMs / DURATION_MS);
 
             if (progress >= 0.5f && this.onMidpoint != null) {
                 this.onMidpoint.run();
